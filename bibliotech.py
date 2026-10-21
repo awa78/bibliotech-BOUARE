@@ -109,7 +109,7 @@ class Library:
                     return x
         return None
 
-    def nb(self, mid):
+    def count_active_loans(self, mid):
         n = 0
         for x in self.l:
             if x["member"] == mid and x["returned"] == "":
@@ -149,7 +149,7 @@ class Library:
                             mx = 8
                         else:
                             mx = 3
-                        if self.nb(mid) < mx:
+                        if self.count_active_loans(mid) < mx:
                             deja = False
                             for x in self.l:
                                 if (
@@ -554,7 +554,7 @@ def process(args):
                 + " | "
                 + s
                 + " | "
-                + str(lib.nb(x["id"]))
+                + str(lib.count_active_loans(x["id"]))
                 + " emprunt(s) en cours"
             )
     elif cmd == "borrow":

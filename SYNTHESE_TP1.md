@@ -37,6 +37,16 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 26 — Donner un nom explicite au comptage des emprunts en cours
+
+- Défaut : nom `nb` trop vague pour identifier le rôle de la méthode.
+- Emplacement : `bibliotech.py`, définition à la ligne 112 et appels aux lignes 152 et 557 au moment de la correction.
+- Correction : renommer `nb` en `count_active_loans` dans la définition et les deux appels.
+- Principe : nommage explicite décrivant le comptage des emprunts en cours d'un membre.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,27 s** ; **8 problèmes Ruff**, tous C901, comme avant ce renommage. Cette amélioration porte sur la lisibilité, sans réduction de la complexité.
+- État : renommage validé par les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : le renommage de `do_stuff` en `borrow_document` a été enregistré dans le commit `71b061b`, confirmé par le terminal de l'utilisatrice.
+
 ### Essai 25 — Renommer la méthode d'emprunt : renommage incomplet détecté
 
 - Objectif : remplacer le nom vague `do_stuff` par `borrow_document`, dans la définition et son appel.
