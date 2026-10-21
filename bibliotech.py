@@ -133,12 +133,13 @@ class Library:
                     # verif retards
                     late = False
                     for x in self.l:
-                        if x["member"] == mid and x["returned"] == "":
-                            if (
-                                datetime.strptime(x["due"], "%Y-%m-%d").date()
-                                < get_today()
-                            ):
-                                late = True
+                        if (
+                            x["member"] == mid
+                            and x["returned"] == ""
+                            and datetime.strptime(x["due"], "%Y-%m-%d").date()
+                            < get_today()
+                        ):
+                            late = True
                     if not late:
                         # verif nombre max
                         if mb["type"] == "student":

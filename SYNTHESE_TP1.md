@@ -37,6 +37,16 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 21 — Réunir les critères de retard d'un membre
+
+- Défaut : conditions imbriquées dans la vérification des retards avant un emprunt (SIM102).
+- Emplacement : `bibliotech.py`, méthode `do_stuff()`, anciennes lignes 136 à 141.
+- Correction : réunir avec `and` les trois critères (identifiant du membre, emprunt non rendu, date d'échéance dépassée), puis conserver `late = True` dans le bloc.
+- Principe : réduire l'imbrication en préservant l'ordre de vérification des conditions.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,28 s** ; **11 problèmes Ruff**, contre 12 avant cet essai. Aucun signalement SIM102 ne reste.
+- État : correction validée par les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : la sélection des emprunts en retard a été enregistrée dans le commit `f8ae461`, confirmé par le terminal de l'utilisatrice.
+
 ### Essai 20 — Réunir les conditions de sélection des emprunts en retard
 
 - Défaut : deux conditions `if` imbriquées pouvant être réunies (SIM102).
