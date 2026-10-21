@@ -270,9 +270,11 @@ class Library:
     def overdue(self):
         tmp = []
         for x in self.l:
-            if x["returned"] == "":
-                if datetime.strptime(x["due"], "%Y-%m-%d").date() < get_today():
-                    tmp.append(x)
+            if (
+                x["returned"] == ""
+                and datetime.strptime(x["due"], "%Y-%m-%d").date() < get_today()
+            ):
+                tmp.append(x)
         if len(tmp) == 0:
             print("Aucun retard.")
             return

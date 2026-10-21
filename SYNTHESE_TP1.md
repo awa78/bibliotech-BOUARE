@@ -37,6 +37,16 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 20 — Réunir les conditions de sélection des emprunts en retard
+
+- Défaut : deux conditions `if` imbriquées pouvant être réunies (SIM102).
+- Emplacement : `bibliotech.py`, méthode `overdue()`, anciennes lignes 273 à 275.
+- Correction : réunir avec `and` la vérification de l'absence de retour et celle du dépassement de la date d'échéance, puis conserver `tmp.append(x)` dans le bloc.
+- Principe : réduire l'imbrication et rendre les critères de sélection lisibles ; `and` conserve l'évaluation conditionnelle de la date après le contrôle du retour.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,30 s** ; **12 problèmes Ruff**, contre 13 avant cet essai. Les signalements SIM102 passent de 2 à 1.
+- État : correction validée par les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : la simplification du texte du statut a été enregistrée dans le commit `5c6e504`, confirmé par le terminal de l'utilisatrice.
+
 ### Essai 19 — Simplifier le choix du texte du statut
 
 - Défaut : bloc `if`/`else` affectant une chaîne à `s` (SIM108).
