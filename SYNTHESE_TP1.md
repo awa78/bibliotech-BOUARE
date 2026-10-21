@@ -37,6 +37,16 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 19 — Simplifier le choix du texte du statut
+
+- Défaut : bloc `if`/`else` affectant une chaîne à `s` (SIM108).
+- Emplacement : `bibliotech.py`, commande `members`, anciennes lignes 544 à 547.
+- Correction : remplacer le bloc par `s = "actif" if x["active"] else "inactif"`.
+- Principe : expression conditionnelle courte pour une affectation simple et lisible.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,24 s** (sortie complète du message précédent) ; **13 problèmes Ruff**, contre 14 avant cet essai. Aucun signalement SIM108 ne reste.
+- État : correction validée par les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : le calcul direct du booléen actif a été enregistré dans le commit `d4aa603`, confirmé par le terminal de l'utilisatrice. Les interruptions Ctrl+C ultérieures n'ont pas annulé ce commit terminé.
+
 ### Essai 18 — Affecter directement le résultat d'une comparaison
 
 - Défaut : bloc `if`/`else` affectant `True` ou `False` à `a` (SIM108).
