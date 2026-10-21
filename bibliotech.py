@@ -14,6 +14,29 @@ DATA = os.environ.get("BIBLIOTECH_DATA", "data")
 TODAY = None
 debug = False
 cache = {}
+def calculate_late_fee(days_late, book, member):
+    if days_late <= 0:
+        return 0
+
+    if book["kind"] == "book":
+        fee = days_late * 0.5
+    elif book["kind"] == "dvd":
+        fee = days_late * 1.0
+    elif book["kind"] == "magazine":
+        fee = days_late * 0.2
+    else:
+        fee = days_late * 0.5
+
+    if member["type"] == "student":
+        fee = fee * 0.5
+    elif member["type"] == "premium":
+        fee = 0
+
+    if fee > book["price"]:
+        fee = book["price"]
+
+    return round(fee, 2)
+
 
 
 class Library:
@@ -240,25 +263,9 @@ class Library:
         mb = self.find("m", ln["member"])
         t = get_today()
         d = (t - datetime.strptime(ln["due"], "%Y-%m-%d").date()).days
-        if d > 0:
-            if bk["kind"] == "book":
-                f = d * 0.5
-            elif bk["kind"] == "dvd":
-                f = d * 1.0
-            elif bk["kind"] == "magazine":
-                f = d * 0.2
-            else:
-                f = d * 0.5
-            if mb["type"] == "student":
-                f = f * 0.5
-            elif mb["type"] == "premium":
-                f = 0
-            if f > bk["price"]:
-                f = bk["price"]
-        else:
-            f = 0
+        if d < 0:
             d = 0
-        f = round(f, 2)
+        f = calculate_late_fee(d, bk, mb)
         ln["returned"] = str(t)
         ln["fee"] = f
         self.save()

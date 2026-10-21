@@ -37,6 +37,16 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 28 — Extraire le calcul des pénalités et l'utiliser pour les retours
+
+- Défaut : calcul des pénalités répété dans plusieurs opérations, augmentant la complexité et le risque de divergences.
+- Emplacement : nouvelle fonction de module `calculate_late_fee(days_late, book, member)` et méthode `ret()` de `bibliotech.py`.
+- Correction : extraire les tarifs par type de document, les réductions par type de membre, le plafond au prix du document et l'arrondi dans la fonction commune ; remplacer le calcul dans `ret()` par un appel à cette fonction. Conserver la normalisation des jours de retard négatifs à zéro avant cet appel.
+- Principes : DRY, extraction de fonction et séparation du calcul de la gestion du retour.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,44 s** ; **7 problèmes Ruff**, tous C901, contre 8 avant cet essai.
+- État : première utilisation de la fonction commune validée par les tests fournis ; commit en attente. Les autres calculs dupliqués restent à remplacer progressivement.
+- Suivi de l'essai précédent : les constantes des durées d'emprunt ont été enregistrées dans le commit `c95d4a3`, confirmé par le terminal de l'utilisatrice.
+
 ### Essai 27 — Nommer les durées d'emprunt : constantes manquantes
 
 - Objectif : remplacer les durées isolées 21, 7 et 3 par `BOOK_LOAN_DAYS`, `DVD_LOAN_DAYS` et `MAGAZINE_LOAN_DAYS`.
