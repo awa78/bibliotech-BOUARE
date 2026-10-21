@@ -43,10 +43,7 @@ class Library:
             if line.strip() == "":
                 continue
             x = line.strip().split(";")
-            if x[4] == "1":
-                a = True
-            else:
-                a = False
+            a = x[4] == "1"
             self.m.append(
                 {"id": x[0], "name": x[1], "email": x[2], "type": x[3], "active": a}
             )

@@ -37,6 +37,18 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 18 — Affecter directement le résultat d'une comparaison
+
+- Défaut : bloc `if`/`else` affectant `True` ou `False` à `a` (SIM108).
+- Emplacement : `bibliotech.py`, lecture des membres dans `load()`, anciennes lignes 46 à 49 de la version enregistrée après formatage.
+- Correction : remplacer le bloc par `a = x[4] == "1"`.
+- Principe : simplicité ; une comparaison produit déjà un booléen.
+- Incident : les numéros affichés dans VS Code différaient de ceux du fichier enregistré. Une capture montrait le message `Failed to save 'bibliotech.py': The content of the file is newer.` Solution conseillée : fermer la version ancienne sans l'enregistrer, puis rouvrir le fichier depuis le disque avant de reprendre la correction.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,74 s** ; **14 problèmes Ruff**, contre 15 avant cet essai. Les signalements SIM108 passent de 2 à 1.
+- État : correction validée par les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : le formatage a été enregistré dans le commit `6d8b3d8`, confirmé par le terminal de l'utilisatrice.
+- Les numéros de ligne suivants seront vérifiés avant chaque nouvelle modification.
+
 ### Essai 17 — Formater le fichier Python
 
 - Défaut : 19 lignes dépassant la longueur configurée (E501) et présentation du code à harmoniser.
