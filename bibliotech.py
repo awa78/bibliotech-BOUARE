@@ -14,6 +14,8 @@ DATA = os.environ.get("BIBLIOTECH_DATA", "data")
 TODAY = None
 debug = False
 cache = {}
+
+
 def calculate_late_fee(days_late, book, member):
     if days_late <= 0:
         return 0
@@ -36,7 +38,6 @@ def calculate_late_fee(days_late, book, member):
         fee = book["price"]
 
     return round(fee, 2)
-
 
 
 class Library:
@@ -189,7 +190,7 @@ class Library:
                                 if self.dispo(bid) > 0:
                                     # duree selon le type
                                     if bk["kind"] == "book":
-                                        d =BOOK_LOAN_DAYS
+                                        d = BOOK_LOAN_DAYS
                                     elif bk["kind"] == "dvd":
                                         d = DVD_LOAN_DAYS
                                     elif bk["kind"] == "magazine":
