@@ -37,6 +37,17 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 23 — Délimiter les exceptions interceptées dans les plugins
+
+- Défaut : `except:` sans type d'exception dans `run_plugins()` (E722).
+- Emplacement : `bibliotech.py`, ligne 499 au moment de la correction.
+- Correction : remplacer `except:` par `except Exception:` en conservant le bloc `pass`.
+- Principe : intercepter les erreurs ordinaires des plugins sans masquer les interruptions comme KeyboardInterrupt (Ctrl+C) et SystemExit.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,75 s** ; **9 problèmes Ruff**, contre 10 avant cet essai. Aucun signalement E722 ne reste.
+- Limite : les tests fournis passent ; la propagation des interruptions est une modification intentionnelle de la gestion des exceptions. Ces résultats ne constituent pas une vérification spécifique des plugins.
+- État : correction vérifiée avec les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : les exceptions de lecture des pénalités ont été précisées dans le commit `957ea42`, confirmé par le terminal de l'utilisatrice.
+
 ### Essai 22 — Préciser les exceptions de lecture d'une pénalité
 
 - Défaut : `except:` sans type d'exception lors de la conversion de `x[6]` en nombre (E722).

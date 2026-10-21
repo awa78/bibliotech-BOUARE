@@ -496,7 +496,7 @@ class Library:
                         event, payload, **self.plugins[name]["options"]
                     )
                 )
-            except:
+            except Exception:
                 pass
         return res
 
