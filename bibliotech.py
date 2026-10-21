@@ -57,7 +57,7 @@ class Library:
             except:
                 fee = 0
             self.l.append({"id": x[0], "member": x[1], "book": x[2], "start": x[3], "due": x[4], "returned": x[5], "fee": fee})
-        if debug == True:
+        if debug:
             print("chargement ok", len(self.b), len(self.m), len(self.l))
 
     def save(self):

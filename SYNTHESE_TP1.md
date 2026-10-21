@@ -20,6 +20,7 @@ Améliorer la lisibilité et la qualité du code sans changer le comportement de
 | Défaut | Emplacement | Correction | Principe | Vérification |
 | --- | --- | --- | --- | --- |
 | Deux modules importés sur une même ligne (E401) | `bibliotech.py`, imports au début du fichier | Remplacement de `import os, sys` par deux lignes : `import os` et `import sys` | Conventions Python et lisibilité | 21 tests réussis ; Ruff : 54 problèmes au lieu de 55 |
+| Comparaison explicite d'un booléen à True (E712) | `bibliotech.py`, ligne 60, méthode `load()` | Utilisation directe de `debug` dans la condition | Simplicité et lisibilité | Résultat transmis par l'utilisatrice : 21 tests réussis ; Ruff : 53 problèmes au lieu de 54 |
 
 ### Essai 1 — Séparer les imports
 
@@ -36,4 +37,20 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
-Ce document sera complété à chaque nouvel essai, en distinguant les propositions des corrections appliquées et vérifiées. Aucun échec des tests n'a été observé à ce stade. Le rapport et la première correction ne sont pas encore commités ni envoyés sur GitHub.
+### Essai 2 — Vérification depuis le terminal de VS Code
+
+Après la proposition de simplifier `if debug == True:` en `if debug:`, l'exécution de `python -m pytest -q` par l'utilisatrice a produit **21 erreurs de préparation** : `PermissionError: [WinError 5]` sur le dossier temporaire `AppData\Local\Temp\pytest-of-awabo`. Des avertissements d'accès au cache `.pytest_cache` sont également présents. Ces erreurs empêchent l'exécution des tests et ne permettent pas de conclure sur le comportement de l'application.
+
+Solution proposée : utiliser un dossier temporaire distinct et désactiver le cache pour cette exécution, sans modifier les tests ni les permissions Windows :
+
+```powershell
+python -m pytest -q -p no:cacheprovider --basetemp "$env:TEMP\bibliotech-tests-awa"
+```
+
+Résultat transmis par l'utilisatrice : **21 tests réussis en 3,23 s**. La commande `python -m ruff check . --statistics` signale **53 problèmes**, contre 54 après la première correction et 55 au départ. Le nombre de signalements E712 passe de 5 à 4. La deuxième correction est validée par les tests fournis.
+
+Un essai intermédiaire avait collé deux commandes en une seule (`python -m pytest -qpython -m ruff check . --statistics`) : pytest avait alors refusé les arguments. La solution a été de lancer chaque commande séparément. Cette erreur de saisie ne nécessitait aucune modification du programme.
+
+Le fichier contient actuellement `if debug :` à la ligne 60. La forme conventionnelle est `if debug:` (sans espace avant les deux-points) ; cet ajustement de présentation reste à effectuer.
+
+Ce document sera complété à chaque nouvel essai, en distinguant les propositions des corrections appliquées et vérifiées. La première correction et le rapport ont été enregistrés dans le commit local 4d50be8, confirmé par le terminal de l'utilisatrice. Aucun envoi sur GitHub n'a été confirmé. Le blocage de préparation des tests est résolu avec la commande ci-dessus. La deuxième correction et cette mise à jour du rapport restent à commiter.
