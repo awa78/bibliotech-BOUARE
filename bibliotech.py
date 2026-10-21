@@ -1,14 +1,15 @@
 # BiblioTech v1.3
 # gestion de la bibliotheque municipale
 # auteur : stagiaire 2019, modifie par plusieurs personnes depuis
+import logging
 import os
 import sys
-from contextlib import suppress
 from datetime import date, datetime, timedelta
 
-BOOK_LOAN_DAYS = 21
-DVD_LOAN_DAYS = 7
-MAGAZINE_LOAN_DAYS = 3
+LOAN_DAYS = {"book": 21, "dvd": 7, "magazine": 3}
+DAILY_FEE = {"book": 0.5, "dvd": 1.0, "magazine": 0.2}
+MAX_LOANS = {"standard": 3, "student": 5, "premium": 8}
+LOGGER = logging.getLogger(__name__)
 
 DATA = os.environ.get("BIBLIOTECH_DATA", "data")
 TODAY = None
@@ -20,14 +21,7 @@ def calculate_late_fee(days_late, book, member):
     if days_late <= 0:
         return 0
 
-    if book["kind"] == "book":
-        fee = days_late * 0.5
-    elif book["kind"] == "dvd":
-        fee = days_late * 1.0
-    elif book["kind"] == "magazine":
-        fee = days_late * 0.2
-    else:
-        fee = days_late * 0.5
+    fee = days_late * DAILY_FEE.get(book["kind"], DAILY_FEE["book"])
 
     if member["type"] == "student":
         fee = fee * 0.5
@@ -62,7 +56,7 @@ class Library:
                     "title": x[1],
                     "author": x[2],
                     "kind": x[3],
-                    "price": eval(x[4]),
+                    "price": float(x[4]),
                     "copies": int(x[5]),
                 }
             )
@@ -105,19 +99,17 @@ class Library:
             f.write("id;member_id;book_id;start;due;returned;fee\n")
             for x in self.l:
                 f.write(
-                    x["id"]
-                    + ";"
-                    + x["member"]
-                    + ";"
-                    + x["book"]
-                    + ";"
-                    + x["start"]
-                    + ";"
-                    + x["due"]
-                    + ";"
-                    + x["returned"]
-                    + ";"
-                    + "%.2f" % x["fee"]
+                    ";".join(
+                        [
+                            x["id"],
+                            x["member"],
+                            x["book"],
+                            x["start"],
+                            x["due"],
+                            x["returned"],
+                            f"{x['fee']:.2f}",
+                        ]
+                    )
                     + "\n"
                 )
 
@@ -171,12 +163,7 @@ class Library:
                             late = True
                     if not late:
                         # verif nombre max
-                        if mb["type"] == "student":
-                            mx = 5
-                        elif mb["type"] == "premium":
-                            mx = 8
-                        else:
-                            mx = 3
+                        mx = MAX_LOANS.get(mb["type"], MAX_LOANS["standard"])
                         if self.count_active_loans(mid) < mx:
                             deja = False
                             for x in self.l:
@@ -189,14 +176,7 @@ class Library:
                             if not deja:
                                 if self.dispo(bid) > 0:
                                     # duree selon le type
-                                    if bk["kind"] == "book":
-                                        d = BOOK_LOAN_DAYS
-                                    elif bk["kind"] == "dvd":
-                                        d = DVD_LOAN_DAYS
-                                    elif bk["kind"] == "magazine":
-                                        d = MAGAZINE_LOAN_DAYS
-                                    else:
-                                        d = BOOK_LOAN_DAYS
+                                    d = LOAN_DAYS.get(bk["kind"], LOAN_DAYS["book"])
                                     t = get_today()
                                     due = t + timedelta(days=d)
                                     mx2 = 0
@@ -217,14 +197,8 @@ class Library:
                                     )
                                     self.save()
                                     print(
-                                        "Emprunt "
-                                        + new_id
-                                        + " enregistre : "
-                                        + bk["title"]
-                                        + " pour "
-                                        + mb["name"]
-                                        + ", retour avant le "
-                                        + str(due)
+                                        f"Emprunt {new_id} enregistre : {bk['title']} "
+                                        f"pour {mb['name']}, retour avant le {due}"
                                     )
                                     return True
                                 else:
@@ -271,13 +245,8 @@ class Library:
         ln["fee"] = f
         self.save()
         print(
-            "Retour enregistre : "
-            + bk["title"]
-            + ". Retard : "
-            + str(d)
-            + " jour(s). Penalite : "
-            + "%.2f" % f
-            + " EUR"
+            f"Retour enregistre : {bk['title']}. Retard : {d} jour(s). "
+            f"Penalite : {f:.2f} EUR"
         )
 
     # liste des retards + envoi des rappels
@@ -302,26 +271,13 @@ class Library:
             p = calculate_late_fee(nbj, book, member)
             total = total + p
             print(
-                x["id"]
-                + " | "
-                + member["name"]
-                + " | "
-                + book["title"]
-                + " | "
-                + str(nbj)
-                + " jour(s) | "
-                + "%.2f" % p
-                + " EUR"
+                f"{x['id']} | {member['name']} | {book['title']} | "
+                f"{nbj} jour(s) | {p:.2f} EUR"
             )
             # envoi du mail
             print(
-                "EMAIL -> "
-                + member["email"]
-                + " : Rappel, vous devez rendre '"
-                + book["title"]
-                + "' (retard "
-                + str(nbj)
-                + " jours)"
+                f"EMAIL -> {member['email']} : Rappel, vous devez rendre "
+                f"'{book['title']}' (retard {nbj} jours)"
             )
         print("Total des penalites en cours : " + "%.2f" % total + " EUR")
 
@@ -352,7 +308,7 @@ class Library:
                     mb = self.find("m", x["member"])
                     j = (get_today() - due).days
                     pen = calculate_late_fee(j, bk, mb)
-                    a_payer = a_payer + round(pen, 2)
+                    a_payer = a_payer + pen
             else:
                 encaisse = encaisse + x["fee"]
             if x["book"] in data2:
@@ -360,13 +316,8 @@ class Library:
             else:
                 data2[x["book"]] = 1
         print(
-            "Emprunts : "
-            + str(len(self.l))
-            + " au total, "
-            + str(en_cours)
-            + " en cours, "
-            + str(en_retard)
-            + " en retard"
+            f"Emprunts : {len(self.l)} au total, {en_cours} en cours, "
+            f"{en_retard} en retard"
         )
         print("Penalites encaissees : " + "%.2f" % encaisse + " EUR")
         print("Penalites en attente : " + "%.2f" % a_payer + " EUR")
@@ -395,21 +346,19 @@ class Library:
     def export(self, fname, sep):
         with open(fname, "w") as f:
             f.write(
-                "loan_id"
-                + sep
-                + "member"
-                + sep
-                + "title"
-                + sep
-                + "start"
-                + sep
-                + "due"
-                + sep
-                + "returned"
-                + sep
-                + "days_late"
-                + sep
-                + "fee\n"
+                sep.join(
+                    [
+                        "loan_id",
+                        "member",
+                        "title",
+                        "start",
+                        "due",
+                        "returned",
+                        "days_late",
+                        "fee",
+                    ]
+                )
+                + "\n"
             )
             n = 0
             for x in self.l:
@@ -424,21 +373,18 @@ class Library:
                     dl = 0
                 fee = calculate_late_fee(dl, bk, mb)
                 f.write(
-                    x["id"]
-                    + sep
-                    + mb["name"]
-                    + sep
-                    + bk["title"]
-                    + sep
-                    + x["start"]
-                    + sep
-                    + x["due"]
-                    + sep
-                    + x["returned"]
-                    + sep
-                    + str(dl)
-                    + sep
-                    + "%.2f" % fee
+                    sep.join(
+                        [
+                            x["id"],
+                            mb["name"],
+                            bk["title"],
+                            x["start"],
+                            x["due"],
+                            x["returned"],
+                            str(dl),
+                            f"{fee:.2f}",
+                        ]
+                    )
                     + "\n"
                 )
                 n = n + 1
@@ -454,13 +400,14 @@ class Library:
     def run_plugins(self, event, payload=None):
         res = []
         for name in sorted(self.plugins, key=lambda n: self.plugins[n]["priority"]):
-            with suppress(Exception):
+            try:
                 res.append(
                     self.plugins[name]["fn"](
                         event, payload, **self.plugins[name]["options"]
                     )
                 )
-                pass
+            except Exception:
+                LOGGER.exception("Echec du plugin %s pour l'evenement %s", name, event)
         return res
 
 
@@ -492,33 +439,15 @@ def process(args):
         for x in lib.b:
             n = lib.dispo(x["id"])
             print(
-                x["id"]
-                + " | "
-                + x["title"]
-                + " | "
-                + x["author"]
-                + " | "
-                + x["kind"]
-                + " | "
-                + str(n)
-                + "/"
-                + str(x["copies"])
-                + " disponible(s)"
+                f"{x['id']} | {x['title']} | {x['author']} | {x['kind']} | "
+                f"{n}/{x['copies']} disponible(s)"
             )
     elif cmd == "members":
         for x in lib.m:
             s = "actif" if x["active"] else "inactif"
             print(
-                x["id"]
-                + " | "
-                + x["name"]
-                + " | "
-                + x["type"]
-                + " | "
-                + s
-                + " | "
-                + str(lib.count_active_loans(x["id"]))
-                + " emprunt(s) en cours"
+                f"{x['id']} | {x['name']} | {x['type']} | {s} | "
+                f"{lib.count_active_loans(x['id'])} emprunt(s) en cours"
             )
     elif cmd == "borrow":
         if len(args) < 3:

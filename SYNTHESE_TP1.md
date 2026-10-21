@@ -50,6 +50,24 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Revue de l'enseignant — correction des six remarques
+
+1. **Prix du CSV** : remplacement de `eval(x[4])` par `float(x[4])` dans `load()`. Un prix est désormais interprété uniquement comme un nombre, sans exécution de code.
+2. **Plugins** : suppression de `suppress` et du `pass` inutile. `run_plugins()` intercepte les exceptions ordinaires avec `except Exception`, puis les journalise avec `LOGGER.exception`, le nom du plugin, l'événement et la trace complète. Les plugins suivants continuent de s'exécuter. Les interruptions comme SystemExit restent propagées. Le journal utilise le module standard logging et sa sortie stderr par défaut en l'absence de configuration.
+3. **Séparation des changements** : le formatage initial disposait déjà du commit `6d8b3d8` (Ruff, pas Black). Un nouveau commit exclusivement consacré au formatage restant, `f339aef`, précède les corrections de revue et corrige notamment `d =BOOK_LOAN_DAYS`. L'historique déjà publié n'a pas été réécrit ; le diff global de la PR conserve donc aussi le formatage initial. Les nouveaux changements sont consultables séparément par commit.
+4. **Chaînes** : remplacement des longues concaténations des messages (emprunt, retour, rappel, rapport, catalogue et membres) par des f-strings, et des lignes CSV/en-têtes par `join`, en conservant les séparateurs, retours à la ligne et deux décimales.
+5. **Règles métier** : dictionnaires `LOAN_DAYS`, `DAILY_FEE` et `MAX_LOANS` pour les durées, tarifs journaliers et limites. Les valeurs par défaut sont conservées : durée et tarif d'un livre pour un type de document inconnu, limite standard pour un type de membre inconnu. Les réductions étudiant/premium restent explicitement appliquées.
+6. **Arrondi** : suppression de `round(pen, 2)` dans le cumul du rapport ; la fonction commune retourne déjà une pénalité arrondie.
+
+Vérifications après corrections :
+
+- Suite fournie : **21 tests réussis en 7,15 s**.
+- Ruff : **5 C901 restants**, aucun nouveau signalement ; `ruff format bibliotech.py --check` confirme le formatage.
+- `git diff --check` : aucun défaut d'espacement.
+- `tests/` et `data/` inchangés depuis `v0-initial`.
+- Vérification ciblée séparée dans `../tmp/verify_bibliotech_review.py`, sans modification des tests fournis : une expression Python dans le prix est rejetée avec ValueError sans créer le fichier témoin ; un plugin défaillant produit un journal avec nom, événement et trace ; le plugin suivant s'exécute ; SystemExit se propage ; tarifs, réductions, plafond, absence de retard et valeur par défaut vérifiés.
+- Le diff global ne peut pas être réduit à deux commits sans réécriture de l'historique publié : cette opération n'a pas été effectuée.
+
 ### Essai 31 — Réutiliser le calcul des pénalités dans le rapport d'activité
 
 - Défaut : dernière duplication des règles de pénalité dans `report()`.
