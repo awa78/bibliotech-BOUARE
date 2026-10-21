@@ -37,6 +37,16 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 6 — Simplifier la condition d'absence de retard
+
+- Défaut : comparaison explicite d'un booléen avec `False` (E712).
+- Emplacement : `bibliotech.py`, ligne 114, méthode `do_stuff()`.
+- Correction : remplacement de `if late == False:` par `if not late:` sans modifier l'indentation.
+- Principe : simplicité et lisibilité des conditions booléennes.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,19 s** ; **46 problèmes Ruff**, contre 47 avant cette correction. Les signalements E712 passent de 3 à 2.
+- État : correction validée ; commit en attente.
+- Suivi de l'essai précédent : la simplification de la condition du membre actif a été enregistrée dans le commit `84e96c9`, confirmé par le terminal de l'utilisatrice.
+
 ### Essai 5 — Simplifier la condition du membre actif
 
 - Défaut : comparaison explicite d'un booléen avec `True` (E712).

@@ -111,7 +111,7 @@ class Library:
                         if x["member"] == mid and x["returned"] == "":
                             if datetime.strptime(x["due"], "%Y-%m-%d").date() < get_today():
                                 late = True
-                    if late == False:
+                    if not late:
                         # verif nombre max
                         if mb["type"] == "student":
                             mx = 5
