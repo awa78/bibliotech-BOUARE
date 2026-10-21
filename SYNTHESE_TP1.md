@@ -37,6 +37,18 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 16 — Fermer automatiquement le fichier exporté : diagnostic en cours
+
+- Objectif : remplacer l'ouverture et la fermeture manuelles dans `export()` par un bloc `with`, sans modifier le calcul ni le contenu exporté.
+- Premier résultat transmis : **20 tests réussis et 1 échoué en 3,34 s**, scénario `export`. Le message annonce 1 ligne exportée au lieu de 12.
+- Diagnostic par comparaison au commit précédent : `n = n + 1` à la ligne 349 est resté hors de la boucle `for x in self.l:`. Il s'exécute une seule fois après la boucle au lieu d'une fois par emprunt.
+- Correction proposée : ajouter un niveau d'indentation (4 espaces) à cette ligne pour l'aligner avec `fee = round(fee, 2)` et l'écriture de chaque emprunt.
+- Deuxième essai transmis : même échec, **20 tests réussis et 1 échoué en 3,01 s**. La relecture du fichier enregistré confirme que le compteur avait toujours 12 espaces au lieu de 16.
+- Correction appliquée par l'assistant : indentation du compteur à 16 espaces, dans la boucle, et suppression des espaces sur la ligne vide suivante.
+- Vérification exécutée par l'assistant après correction : **21 tests réussis en 3,07 s** avec le cache désactivé ; **34 problèmes Ruff**, contre 35 avant cet essai. Aucun signalement SIM115 ne reste.
+- État : correction validée par les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : la sauvegarde avec `with` a été enregistrée dans le commit `b6e37f9`, confirmé par le terminal de l'utilisatrice.
+
 ### Essai 15 — Fermer automatiquement le fichier des emprunts à la sauvegarde
 
 - Défaut : ouverture de `loans.csv` en écriture et fermeture manuelle avec `f.close()` (SIM115).
