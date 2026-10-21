@@ -55,11 +55,10 @@ class Library:
             print("chargement ok", len(self.b), len(self.m), len(self.l))
 
     def save(self):
-        f = open(DATA + "/loans.csv", "w")
-        f.write("id;member_id;book_id;start;due;returned;fee\n")
-        for x in self.l:
-            f.write(x["id"] + ";" + x["member"] + ";" + x["book"] + ";" + x["start"] + ";" + x["due"] + ";" + x["returned"] + ";" + "%.2f" % x["fee"] + "\n")
-        f.close()
+        with open(DATA + "/loans.csv", "w") as f:
+            f.write("id;member_id;book_id;start;due;returned;fee\n")
+            for x in self.l:
+                f.write(x["id"] + ";" + x["member"] + ";" + x["book"] + ";" + x["start"] + ";" + x["due"] + ";" + x["returned"] + ";" + "%.2f" % x["fee"] + "\n")
 
     # t = "b" pour livre, "m" pour membre, "l" pour emprunt
     def find(self, t, id):
