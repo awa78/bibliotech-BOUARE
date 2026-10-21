@@ -37,6 +37,16 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 4 — Comparaisons avec None : échec détecté et diagnostic
+
+- Objectif : remplacer les comparaisons `== None` et `!= None` par `is None` et `is not None` aux lignes 104, 106, 174 et 376.
+- Premier résultat transmis : **19 tests réussis et 2 échoués** (`report`, `report_after_returns`) ; Ruff signale **49 problèmes**, dont un E711 restant.
+- Diagnostic par comparaison au dernier commit : les lignes 104, 106 et 174 sont correctement modifiées, mais la condition `if bk["kind"] in k:` à la ligne 306 a été remplacée par erreur par `if TODAY is None:`. Cela réinitialise les compteurs par type de document dans le rapport. La comparaison prévue à la ligne 376 n'a pas été modifiée.
+- Correction proposée : rétablir `if bk["kind"] in k:` à la ligne 306, puis remplacer `if TODAY == None:` par `if TODAY is None:` à la ligne 376.
+- Enseignement : les tests ont détecté une modification involontaire du comportement ; une baisse du nombre de problèmes Ruff ne suffit pas à valider une correction.
+- Résultat après correction transmis par l'utilisatrice : **21 tests réussis en 4,44 s**, et **48 problèmes Ruff**, contre 52 avant cet essai. Les quatre signalements E711 ont disparu. Les tests du rapport réussissent à nouveau.
+- État : correction validée par les tests fournis ; commit en attente.
+
 ### Essai 3 — Supprimer un import inutilisé
 
 - Défaut : import du module `json` sans utilisation dans le fichier (F401).
@@ -44,7 +54,7 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 - Correction : suppression de `import json`.
 - Principe : supprimer le code inutile et rendre les dépendances plus lisibles.
 - Vérifications transmises par l'utilisatrice : `python -m pytest -q -p no:cacheprovider --basetemp "$env:TEMP\bibliotech-tests-awa"` donne **21 tests réussis en 4,39 s** ; `python -m ruff check . --statistics` donne **52 problèmes**, contre 53 avant cette correction et 55 au départ. Le signalement F401 a disparu.
-- État : correction validée par les tests fournis ; commit en attente.
+- État : correction validée par les tests fournis et enregistrée dans le commit local `8f011c9`, confirmé par le terminal de l'utilisatrice.
 
 ### Essai 2 — Vérification depuis le terminal de VS Code
 
