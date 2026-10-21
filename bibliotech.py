@@ -6,7 +6,7 @@ import os
 import sys
 import datetime
 from datetime import *
-import json
+
 
 DATA = os.environ.get("BIBLIOTECH_DATA", "data")
 TODAY = None

@@ -37,6 +37,15 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 3 — Supprimer un import inutilisé
+
+- Défaut : import du module `json` sans utilisation dans le fichier (F401).
+- Emplacement : `bibliotech.py`, ancienne ligne 9, bloc des imports.
+- Correction : suppression de `import json`.
+- Principe : supprimer le code inutile et rendre les dépendances plus lisibles.
+- Vérifications transmises par l'utilisatrice : `python -m pytest -q -p no:cacheprovider --basetemp "$env:TEMP\bibliotech-tests-awa"` donne **21 tests réussis en 4,39 s** ; `python -m ruff check . --statistics` donne **52 problèmes**, contre 53 avant cette correction et 55 au départ. Le signalement F401 a disparu.
+- État : correction validée par les tests fournis ; commit en attente.
+
 ### Essai 2 — Vérification depuis le terminal de VS Code
 
 Après la proposition de simplifier `if debug == True:` en `if debug:`, l'exécution de `python -m pytest -q` par l'utilisatrice a produit **21 erreurs de préparation** : `PermissionError: [WinError 5]` sur le dossier temporaire `AppData\Local\Temp\pytest-of-awabo`. Des avertissements d'accès au cache `.pytest_cache` sont également présents. Ces erreurs empêchent l'exécution des tests et ne permettent pas de conclure sur le comportement de l'application.
@@ -51,6 +60,6 @@ Résultat transmis par l'utilisatrice : **21 tests réussis en 3,23 s**. La comm
 
 Un essai intermédiaire avait collé deux commandes en une seule (`python -m pytest -qpython -m ruff check . --statistics`) : pytest avait alors refusé les arguments. La solution a été de lancer chaque commande séparément. Cette erreur de saisie ne nécessitait aucune modification du programme.
 
-Le fichier contient actuellement `if debug :` à la ligne 60. La forme conventionnelle est `if debug:` (sans espace avant les deux-points) ; cet ajustement de présentation reste à effectuer.
+La forme conventionnelle attendue à la ligne 60 est `if debug:` (sans espace avant les deux-points).
 
-Ce document sera complété à chaque nouvel essai, en distinguant les propositions des corrections appliquées et vérifiées. La première correction et le rapport ont été enregistrés dans le commit local 4d50be8, confirmé par le terminal de l'utilisatrice. Aucun envoi sur GitHub n'a été confirmé. Le blocage de préparation des tests est résolu avec la commande ci-dessus. La deuxième correction et cette mise à jour du rapport restent à commiter.
+Ce document sera complété à chaque nouvel essai, en distinguant les propositions des corrections appliquées et vérifiées. La première correction a été enregistrée dans le commit local `4d50be8`, et la deuxième dans `562b3f0`, confirmés par le terminal de l'utilisatrice. Aucun envoi sur GitHub n'a été confirmé. Le blocage de préparation des tests est résolu avec la commande ci-dessus.
