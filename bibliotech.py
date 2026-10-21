@@ -55,7 +55,7 @@ class Library:
             x = line.strip().split(";")
             try:
                 fee = float(x[6])
-            except:
+            except (ValueError, IndexError):
                 fee = 0
             self.l.append(
                 {

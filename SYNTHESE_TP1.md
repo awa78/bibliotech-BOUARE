@@ -37,6 +37,17 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 22 — Préciser les exceptions de lecture d'une pénalité
+
+- Défaut : `except:` sans type d'exception lors de la conversion de `x[6]` en nombre (E722).
+- Emplacement : `bibliotech.py`, méthode `load()`, ligne 58 au moment de la correction.
+- Correction : remplacer `except:` par `except (ValueError, IndexError):` en conservant `fee = 0`.
+- Principe : gérer explicitement les erreurs de conversion d'une valeur non numérique et d'accès à une colonne absente, sans masquer toutes les erreurs inattendues.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,32 s** ; **10 problèmes Ruff**, contre 11 avant cet essai. Les signalements E722 passent de 2 à 1.
+- Limite : les tests fournis passent, mais le périmètre des exceptions interceptées est volontairement restreint ; les exceptions autres que ValueError et IndexError ne sont plus masquées par ce bloc.
+- État : correction vérifiée avec les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : la réunion des critères de retard du membre a été enregistrée dans le commit `247e1c8`, confirmé par le terminal de l'utilisatrice.
+
 ### Essai 21 — Réunir les critères de retard d'un membre
 
 - Défaut : conditions imbriquées dans la vérification des retards avant un emprunt (SIM102).
