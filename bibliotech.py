@@ -409,7 +409,7 @@ def process(args):
             print("Usage : borrow <id_membre> <id_document>")
             return 1
         r = lib.do_stuff(args[1], args[2])
-        if r == False:
+        if not r:
             return 2
     elif cmd == "return":
         if len(args) < 2:

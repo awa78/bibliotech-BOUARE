@@ -37,6 +37,16 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 8 — Simplifier la dernière comparaison booléenne
+
+- Défaut : comparaison explicite d'un résultat avec `False` (E712).
+- Emplacement : `bibliotech.py`, ligne 412.
+- Correction : remplacement de `if r == False:` par `if not r:` en conservant l'indentation.
+- Principe : simplicité et lisibilité des conditions booléennes.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,37 s** ; **44 problèmes Ruff**, contre 45 avant cette correction et 55 initialement. Aucun signalement E712 ne reste.
+- État : correction validée par les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : la simplification de la condition du membre actif dans l'affichage a été enregistrée dans le commit `848da21`, confirmé par le terminal de l'utilisatrice.
+
 ### Essai 7 — Simplifier la condition du membre actif dans l'affichage
 
 - Défaut : comparaison explicite d'un booléen avec `True` (E712).
