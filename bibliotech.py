@@ -2,7 +2,8 @@
 # gestion de la bibliotheque municipale
 # auteur : stagiaire 2019, modifie par plusieurs personnes depuis
 
-import os, sys
+import os
+import sys
 import datetime
 from datetime import *
 import json
