@@ -298,24 +298,7 @@ class Library:
             member = self.find("m", x["member"])
             nbj = (get_today() - datetime.strptime(x["due"], "%Y-%m-%d").date()).days
             # calcul penalite
-            if nbj > 0:
-                if book["kind"] == "book":
-                    p = nbj * 0.5
-                elif book["kind"] == "dvd":
-                    p = nbj * 1.0
-                elif book["kind"] == "magazine":
-                    p = nbj * 0.2
-                else:
-                    p = nbj * 0.5
-                if member["type"] == "student":
-                    p = p * 0.5
-                elif member["type"] == "premium":
-                    p = 0
-                if p > book["price"]:
-                    p = book["price"]
-            else:
-                p = 0
-            p = round(p, 2)
+            p = calculate_late_fee(nbj, book, member)
             total = total + p
             print(
                 x["id"]

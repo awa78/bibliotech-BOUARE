@@ -37,6 +37,16 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 29 — Réutiliser le calcul des pénalités pour les retards
+
+- Défaut : duplication du calcul des tarifs, réductions, plafond et arrondi dans `overdue()`.
+- Emplacement : `bibliotech.py`, méthode `overdue()`, anciennes lignes 301 à 318.
+- Correction : remplacer ce calcul par `p = calculate_late_fee(nbj, book, member)`, en conservant le calcul des jours de retard, le cumul et l'affichage.
+- Principes : DRY et réduction de la complexité ; les retards et les retours utilisent désormais le même calcul des pénalités.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,41 s** ; **6 problèmes Ruff**, tous C901, contre 7 avant cet essai.
+- État : correction validée par les tests fournis ; commit en attente. Les autres duplications seront examinées séparément.
+- Suivi de l'essai précédent : l'extraction du calcul pour les retours a été enregistrée dans le commit `85acec4`, confirmé par le terminal de l'utilisatrice.
+
 ### Essai 28 — Extraire le calcul des pénalités et l'utiliser pour les retours
 
 - Défaut : calcul des pénalités répété dans plusieurs opérations, augmentant la complexité et le risque de divergences.
