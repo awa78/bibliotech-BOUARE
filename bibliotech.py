@@ -3,6 +3,7 @@
 # auteur : stagiaire 2019, modifie par plusieurs personnes depuis
 import os
 import sys
+from contextlib import suppress
 from datetime import date, datetime, timedelta
 
 DATA = os.environ.get("BIBLIOTECH_DATA", "data")
@@ -490,13 +491,12 @@ class Library:
     def run_plugins(self, event, payload=None):
         res = []
         for name in sorted(self.plugins, key=lambda n: self.plugins[n]["priority"]):
-            try:
+            with suppress(Exception):
                 res.append(
                     self.plugins[name]["fn"](
                         event, payload, **self.plugins[name]["options"]
                     )
                 )
-            except Exception:
                 pass
         return res
 

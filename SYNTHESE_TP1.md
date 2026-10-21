@@ -37,6 +37,16 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 24 — Exprimer explicitement l'ignorance des erreurs des plugins
+
+- Défaut : bloc `try` / `except Exception: pass` pouvant être exprimé avec `contextlib.suppress` (SIM105).
+- Emplacement : imports et méthode `run_plugins()` de `bibliotech.py`, anciennes lignes 494 à 501 après ajout de l'import.
+- Correction : ajouter `from contextlib import suppress`, puis remplacer le bloc `try` / `except` par `with suppress(Exception):` autour de l'appel et de l'ajout du résultat ; conserver `return res` après la boucle.
+- Principe : exprimer directement l'intention d'ignorer les exceptions ordinaires d'un plugin et continuer les suivants, avec la même portée d'interception que `except Exception`.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,32 s** ; **8 problèmes Ruff**, contre 9 avant cet essai. Le signalement SIM105 a disparu ; les 8 signalements restants sont C901 (complexité des fonctions).
+- État : correction validée par les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : la capture des erreurs des plugins a été limitée à Exception dans le commit `0a6fb95`, confirmé par le terminal de l'utilisatrice.
+
 ### Essai 23 — Délimiter les exceptions interceptées dans les plugins
 
 - Défaut : `except:` sans type d'exception dans `run_plugins()` (E722).
