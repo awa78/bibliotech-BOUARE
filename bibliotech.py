@@ -12,7 +12,6 @@ cache = {}
 
 
 class Library:
-
     def __init__(self):
         self.b = []
         self.m = []
@@ -28,7 +27,16 @@ class Library:
             if line.strip() == "":
                 continue
             x = line.strip().split(";")
-            self.b.append({"id": x[0], "title": x[1], "author": x[2], "kind": x[3], "price": eval(x[4]), "copies": int(x[5])})
+            self.b.append(
+                {
+                    "id": x[0],
+                    "title": x[1],
+                    "author": x[2],
+                    "kind": x[3],
+                    "price": eval(x[4]),
+                    "copies": int(x[5]),
+                }
+            )
         with open(DATA + "/members.csv") as f:
             lines = f.readlines()
         for line in lines[1:]:
@@ -39,7 +47,9 @@ class Library:
                 a = True
             else:
                 a = False
-            self.m.append({"id": x[0], "name": x[1], "email": x[2], "type": x[3], "active": a})
+            self.m.append(
+                {"id": x[0], "name": x[1], "email": x[2], "type": x[3], "active": a}
+            )
         with open(DATA + "/loans.csv") as f:
             lines = f.readlines()
         for line in lines[1:]:
@@ -50,7 +60,17 @@ class Library:
                 fee = float(x[6])
             except:
                 fee = 0
-            self.l.append({"id": x[0], "member": x[1], "book": x[2], "start": x[3], "due": x[4], "returned": x[5], "fee": fee})
+            self.l.append(
+                {
+                    "id": x[0],
+                    "member": x[1],
+                    "book": x[2],
+                    "start": x[3],
+                    "due": x[4],
+                    "returned": x[5],
+                    "fee": fee,
+                }
+            )
         if debug:
             print("chargement ok", len(self.b), len(self.m), len(self.l))
 
@@ -58,7 +78,22 @@ class Library:
         with open(DATA + "/loans.csv", "w") as f:
             f.write("id;member_id;book_id;start;due;returned;fee\n")
             for x in self.l:
-                f.write(x["id"] + ";" + x["member"] + ";" + x["book"] + ";" + x["start"] + ";" + x["due"] + ";" + x["returned"] + ";" + "%.2f" % x["fee"] + "\n")
+                f.write(
+                    x["id"]
+                    + ";"
+                    + x["member"]
+                    + ";"
+                    + x["book"]
+                    + ";"
+                    + x["start"]
+                    + ";"
+                    + x["due"]
+                    + ";"
+                    + x["returned"]
+                    + ";"
+                    + "%.2f" % x["fee"]
+                    + "\n"
+                )
 
     # t = "b" pour livre, "m" pour membre, "l" pour emprunt
     def find(self, t, id):
@@ -102,7 +137,10 @@ class Library:
                     late = False
                     for x in self.l:
                         if x["member"] == mid and x["returned"] == "":
-                            if datetime.strptime(x["due"], "%Y-%m-%d").date() < get_today():
+                            if (
+                                datetime.strptime(x["due"], "%Y-%m-%d").date()
+                                < get_today()
+                            ):
                                 late = True
                     if not late:
                         # verif nombre max
@@ -115,7 +153,11 @@ class Library:
                         if self.nb(mid) < mx:
                             deja = False
                             for x in self.l:
-                                if x["member"] == mid and x["book"] == bid and x["returned"] == "":
+                                if (
+                                    x["member"] == mid
+                                    and x["book"] == bid
+                                    and x["returned"] == ""
+                                ):
                                     deja = True
                             if not deja:
                                 if self.dispo(bid) > 0:
@@ -135,9 +177,28 @@ class Library:
                                         if int(x["id"][1:]) > mx2:
                                             mx2 = int(x["id"][1:])
                                     new_id = "L" + str(mx2 + 1).zfill(3)
-                                    self.l.append({"id": new_id, "member": mid, "book": bid, "start": str(t), "due": str(due), "returned": "", "fee": 0})
+                                    self.l.append(
+                                        {
+                                            "id": new_id,
+                                            "member": mid,
+                                            "book": bid,
+                                            "start": str(t),
+                                            "due": str(due),
+                                            "returned": "",
+                                            "fee": 0,
+                                        }
+                                    )
                                     self.save()
-                                    print("Emprunt " + new_id + " enregistre : " + bk["title"] + " pour " + mb["name"] + ", retour avant le " + str(due))
+                                    print(
+                                        "Emprunt "
+                                        + new_id
+                                        + " enregistre : "
+                                        + bk["title"]
+                                        + " pour "
+                                        + mb["name"]
+                                        + ", retour avant le "
+                                        + str(due)
+                                    )
                                     return True
                                 else:
                                     print("Refus : plus d'exemplaire disponible")
@@ -146,7 +207,9 @@ class Library:
                                 print("Refus : deja emprunte par ce membre")
                                 return False
                         else:
-                            print("Refus : limite d'emprunts atteinte (" + str(mx) + ")")
+                            print(
+                                "Refus : limite d'emprunts atteinte (" + str(mx) + ")"
+                            )
                             return False
                     else:
                         print("Refus : emprunts en retard")
@@ -196,7 +259,15 @@ class Library:
         ln["returned"] = str(t)
         ln["fee"] = f
         self.save()
-        print("Retour enregistre : " + bk["title"] + ". Retard : " + str(d) + " jour(s). Penalite : " + "%.2f" % f + " EUR")
+        print(
+            "Retour enregistre : "
+            + bk["title"]
+            + ". Retard : "
+            + str(d)
+            + " jour(s). Penalite : "
+            + "%.2f" % f
+            + " EUR"
+        )
 
     # liste des retards + envoi des rappels
     def overdue(self):
@@ -234,9 +305,28 @@ class Library:
                 p = 0
             p = round(p, 2)
             total = total + p
-            print(x["id"] + " | " + member["name"] + " | " + book["title"] + " | " + str(nbj) + " jour(s) | " + "%.2f" % p + " EUR")
+            print(
+                x["id"]
+                + " | "
+                + member["name"]
+                + " | "
+                + book["title"]
+                + " | "
+                + str(nbj)
+                + " jour(s) | "
+                + "%.2f" % p
+                + " EUR"
+            )
             # envoi du mail
-            print("EMAIL -> " + member["email"] + " : Rappel, vous devez rendre '" + book["title"] + "' (retard " + str(nbj) + " jours)")
+            print(
+                "EMAIL -> "
+                + member["email"]
+                + " : Rappel, vous devez rendre '"
+                + book["title"]
+                + "' (retard "
+                + str(nbj)
+                + " jours)"
+            )
         print("Total des penalites en cours : " + "%.2f" % total + " EUR")
 
     def report(self):
@@ -289,7 +379,15 @@ class Library:
                 data2[x["book"]] = data2[x["book"]] + 1
             else:
                 data2[x["book"]] = 1
-        print("Emprunts : " + str(len(self.l)) + " au total, " + str(en_cours) + " en cours, " + str(en_retard) + " en retard")
+        print(
+            "Emprunts : "
+            + str(len(self.l))
+            + " au total, "
+            + str(en_cours)
+            + " en cours, "
+            + str(en_retard)
+            + " en retard"
+        )
         print("Penalites encaissees : " + "%.2f" % encaisse + " EUR")
         print("Penalites en attente : " + "%.2f" % a_payer + " EUR")
         # par type
@@ -316,7 +414,23 @@ class Library:
 
     def export(self, fname, sep):
         with open(fname, "w") as f:
-            f.write("loan_id" + sep + "member" + sep + "title" + sep + "start" + sep + "due" + sep + "returned" + sep + "days_late" + sep + "fee\n")
+            f.write(
+                "loan_id"
+                + sep
+                + "member"
+                + sep
+                + "title"
+                + sep
+                + "start"
+                + sep
+                + "due"
+                + sep
+                + "returned"
+                + sep
+                + "days_late"
+                + sep
+                + "fee\n"
+            )
             n = 0
             for x in self.l:
                 bk = self.find("b", x["book"])
@@ -345,7 +459,24 @@ class Library:
                     fee = 0
                     dl = 0
                 fee = round(fee, 2)
-                f.write(x["id"] + sep + mb["name"] + sep + bk["title"] + sep + x["start"] + sep + x["due"] + sep + x["returned"] + sep + str(dl) + sep + "%.2f" % fee + "\n")
+                f.write(
+                    x["id"]
+                    + sep
+                    + mb["name"]
+                    + sep
+                    + bk["title"]
+                    + sep
+                    + x["start"]
+                    + sep
+                    + x["due"]
+                    + sep
+                    + x["returned"]
+                    + sep
+                    + str(dl)
+                    + sep
+                    + "%.2f" % fee
+                    + "\n"
+                )
                 n = n + 1
 
         print("Export termine : " + str(n) + " lignes dans " + fname)
@@ -360,7 +491,11 @@ class Library:
         res = []
         for name in sorted(self.plugins, key=lambda n: self.plugins[n]["priority"]):
             try:
-                res.append(self.plugins[name]["fn"](event, payload, **self.plugins[name]["options"]))
+                res.append(
+                    self.plugins[name]["fn"](
+                        event, payload, **self.plugins[name]["options"]
+                    )
+                )
             except:
                 pass
         return res
@@ -384,21 +519,47 @@ def process(args):
     global TODAY
     lib = Library()
     if len(args) == 0:
-        print("Usage : python bibliotech.py <commande> [arguments] [--today AAAA-MM-JJ]")
+        print(
+            "Usage : python bibliotech.py <commande> [arguments] [--today AAAA-MM-JJ]"
+        )
         print("Commandes : list, members, borrow, return, overdue, report, export")
         return 1
     cmd = args[0]
     if cmd == "list":
         for x in lib.b:
             n = lib.dispo(x["id"])
-            print(x["id"] + " | " + x["title"] + " | " + x["author"] + " | " + x["kind"] + " | " + str(n) + "/" + str(x["copies"]) + " disponible(s)")
+            print(
+                x["id"]
+                + " | "
+                + x["title"]
+                + " | "
+                + x["author"]
+                + " | "
+                + x["kind"]
+                + " | "
+                + str(n)
+                + "/"
+                + str(x["copies"])
+                + " disponible(s)"
+            )
     elif cmd == "members":
         for x in lib.m:
             if x["active"]:
                 s = "actif"
             else:
                 s = "inactif"
-            print(x["id"] + " | " + x["name"] + " | " + x["type"] + " | " + s + " | " + str(lib.nb(x["id"])) + " emprunt(s) en cours")
+            print(
+                x["id"]
+                + " | "
+                + x["name"]
+                + " | "
+                + x["type"]
+                + " | "
+                + s
+                + " | "
+                + str(lib.nb(x["id"]))
+                + " emprunt(s) en cours"
+            )
     elif cmd == "borrow":
         if len(args) < 3:
             print("Usage : borrow <id_membre> <id_document>")
@@ -431,7 +592,7 @@ if __name__ == "__main__":
     if "--today" in a:
         i = a.index("--today")
         TODAY = datetime.strptime(a[i + 1], "%Y-%m-%d").date()
-        a = a[:i] + a[i + 2:]
+        a = a[:i] + a[i + 2 :]
     if "--debug" in a:
         debug = True
         a.remove("--debug")

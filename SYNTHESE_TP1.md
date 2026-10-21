@@ -37,6 +37,18 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 17 — Formater le fichier Python
+
+- Défaut : 19 lignes dépassant la longueur configurée (E501) et présentation du code à harmoniser.
+- Emplacement : ensemble du fichier `bibliotech.py`.
+- Correction : exécution de `python -m ruff format bibliotech.py` ; résultat transmis : `1 file reformatted`.
+- Principe : conventions Python et présentation cohérente facilitant la lecture.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,69 s** ; **15 problèmes Ruff**, contre 34 avant cet essai et 55 initialement. Les 19 signalements E501 ont disparu.
+- Problèmes restants à ce stade : 8 C901, 2 E722, 2 SIM102, 2 SIM108 et 1 SIM105.
+- État : correction validée par les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : la fermeture automatique du fichier exporté a été enregistrée dans le commit `71fa056`, confirmé par le terminal de l'utilisatrice.
+- Le formatage modifie de nombreux numéros de ligne ; les prochains emplacements devront être relevés dans le fichier actuel.
+
 ### Essai 16 — Fermer automatiquement le fichier exporté : diagnostic en cours
 
 - Objectif : remplacer l'ouverture et la fermeture manuelles dans `export()` par un bloc `with`, sans modifier le calcul ni le contenu exporté.
