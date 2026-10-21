@@ -22,9 +22,8 @@ class Library:
 
     # chargement des donnees
     def load(self):
-        f = open(DATA + "/books.csv")
-        lines = f.readlines()
-        f.close()
+        with open(DATA + "/books.csv") as f:
+            lines = f.readlines()
         for line in lines[1:]:
             if line.strip() == "":
                 continue

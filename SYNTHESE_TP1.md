@@ -37,6 +37,17 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 12 — Fermer automatiquement le fichier du catalogue
+
+- Défaut : ouverture de `books.csv` et fermeture manuelle avec `f.close()` (SIM115).
+- Emplacement : `bibliotech.py`, méthode `load()`, anciennes lignes 25 à 27.
+- Correction : utiliser `with open(DATA + "/books.csv") as f:`, avec `lines = f.readlines()` dans le bloc ; conserver la boucle de traitement après le bloc.
+- Principe : gestion fiable des ressources ; le fichier est fermé même si la lecture lève une exception.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,74 s** ; **38 problèmes Ruff**, contre 39 avant cet essai. Les signalements SIM115 passent de 5 à 4.
+- État : correction validée par les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : la suppression du dictionnaire mutable par défaut a été enregistrée dans le commit `f0178fe`, confirmé par le terminal de l'utilisatrice.
+- La suppression d'une ligne décale les emplacements suivants ; ils seront vérifiés avant la prochaine correction.
+
 ### Essai 11 — Éviter un dictionnaire mutable comme argument par défaut
 
 - Défaut : `options={}` dans la signature de `register_plugin()` (B006) ; le dictionnaire par défaut est partagé entre les appels.
