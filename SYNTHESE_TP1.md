@@ -37,6 +37,17 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 25 — Renommer la méthode d'emprunt : renommage incomplet détecté
+
+- Objectif : remplacer le nom vague `do_stuff` par `borrow_document`, dans la définition et son appel.
+- Résultat transmis : **7 tests échoués et 14 réussis**, tous les échecs concernant les scénarios d'emprunt ; le dernier lancement transmis dure 3,88 s.
+- Diagnostic par comparaison au dernier commit : l'appel à la ligne 564 utilise `lib.borrow_document(...)`, mais la définition à la ligne 128 porte encore le nom `do_stuff`. Le renommage est incomplet.
+- Correction proposée : renommer également la définition en `def borrow_document(self, mid, bid):` sans modifier son corps.
+- Principe : nommage explicite ; mettre à jour la définition et les références ensemble.
+- Résultat après correction transmis par l'utilisatrice : **21 tests réussis en 3,90 s** ; **8 problèmes Ruff**, tous C901, comme avant le renommage. Le changement améliore le nommage sans réduire la complexité.
+- État : renommage validé par les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : l'utilisation de suppress a été enregistrée dans le commit `ab3065b`, confirmé par le terminal de l'utilisatrice.
+
 ### Essai 24 — Exprimer explicitement l'ignorance des erreurs des plugins
 
 - Défaut : bloc `try` / `except Exception: pass` pouvant être exprimé avec `contextlib.suppress` (SIM105).
