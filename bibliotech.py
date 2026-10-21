@@ -256,7 +256,7 @@ class Library:
         print("Titres : " + str(len(self.b)) + " (" + str(c) + " exemplaires)")
         a = 0
         for x in self.m:
-            if x["active"] == True:
+            if x["active"]:
                 a = a + 1
         print("Membres : " + str(len(self.m)) + " dont " + str(a) + " actifs")
         en_cours = 0

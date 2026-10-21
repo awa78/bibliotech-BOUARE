@@ -37,6 +37,16 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 7 — Simplifier la condition du membre actif dans l'affichage
+
+- Défaut : comparaison explicite d'un booléen avec `True` (E712).
+- Emplacement : `bibliotech.py`, ligne 259.
+- Correction : remplacement de `if x["active"] == True:` par `if x["active"]:` en conservant l'indentation.
+- Principe : simplicité et lisibilité des conditions booléennes.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 2,95 s** ; **45 problèmes Ruff**, contre 46 avant cette correction. Il reste un signalement E712.
+- État : correction validée ; commit en attente.
+- Suivi de l'essai précédent : la simplification de la condition d'absence de retard a été enregistrée dans le commit `f70af4b`, confirmé par le terminal de l'utilisatrice.
+
 ### Essai 6 — Simplifier la condition d'absence de retard
 
 - Défaut : comparaison explicite d'un booléen avec `False` (E712).
