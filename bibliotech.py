@@ -350,23 +350,7 @@ class Library:
                     bk = self.find("b", x["book"])
                     mb = self.find("m", x["member"])
                     j = (get_today() - due).days
-                    if j > 0:
-                        if bk["kind"] == "book":
-                            pen = j * 0.5
-                        elif bk["kind"] == "dvd":
-                            pen = j * 1.0
-                        elif bk["kind"] == "magazine":
-                            pen = j * 0.2
-                        else:
-                            pen = j * 0.5
-                        if mb["type"] == "student":
-                            pen = pen * 0.5
-                        elif mb["type"] == "premium":
-                            pen = 0
-                        if pen > bk["price"]:
-                            pen = bk["price"]
-                    else:
-                        pen = 0
+                    pen = calculate_late_fee(j, bk, mb)
                     a_payer = a_payer + round(pen, 2)
             else:
                 encaisse = encaisse + x["fee"]

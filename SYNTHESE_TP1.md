@@ -37,6 +37,18 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 31 — Réutiliser le calcul des pénalités dans le rapport d'activité
+
+- Défaut : dernière duplication des règles de pénalité dans `report()`.
+- Emplacement : `bibliotech.py`, méthode `report()`, anciennes lignes 353 à 369.
+- Correction : remplacer le calcul par `pen = calculate_late_fee(j, bk, mb)` ; conserver le calcul des jours et le cumul de la pénalité arrondie.
+- Principes : DRY et centralisation des règles métier ; retours, retards, export et rapport utilisent désormais la fonction commune.
+- Tests transmis par l'utilisatrice après remplacement : **21 tests réussis en 3,44 s**.
+- Analyse initiale après cet essai : 5 C901 et 1 W291. Suppression ciblée de l'espace de fin de ligne avec `python -m ruff check bibliotech.py --select W291 --fix` : `1 fixed`.
+- Analyse finale transmise : **5 problèmes Ruff**, tous C901, comme avant cet essai. La centralisation réduit la duplication sans faire passer une fonction supplémentaire sous le seuil de complexité configuré.
+- État : correction vérifiée avec les tests fournis avant la suppression d'espace final ; commit en attente.
+- Suivi de l'essai précédent : le calcul commun dans l'export a été enregistré dans le commit `a1cd59f`, confirmé par le terminal de l'utilisatrice.
+
 ### Essai 30 — Réutiliser le calcul des pénalités dans l'export
 
 - Défaut : duplication du calcul des pénalités dans `export()`.
