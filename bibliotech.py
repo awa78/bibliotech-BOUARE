@@ -1,11 +1,9 @@
 # BiblioTech v1.3
 # gestion de la bibliotheque municipale
 # auteur : stagiaire 2019, modifie par plusieurs personnes depuis
-
 import os
 import sys
-import datetime
-from datetime import *
+from datetime import date, datetime, timedelta
 
 
 DATA = os.environ.get("BIBLIOTECH_DATA", "data")

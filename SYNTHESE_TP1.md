@@ -37,6 +37,17 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 9 — Rendre les imports datetime explicites
+
+- Défaut : import global `from datetime import *` et import redondant `import datetime`, rendant l'origine des noms moins claire (F403 et F405).
+- Emplacement : `bibliotech.py`, bloc des imports, anciennes lignes 5 à 8.
+- Correction : conserver `import os` et `import sys`, puis importer explicitement `date`, `datetime` et `timedelta` avec `from datetime import date, datetime, timedelta`.
+- Principe : dépendances explicites et lisibilité ; suppression d'un import redondant.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,02 s** ; **41 problèmes Ruff**, contre 44 avant cette correction. Le signalement F403 et les deux signalements F405 ont disparu.
+- État : correction validée par les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : la dernière simplification booléenne a été enregistrée dans le commit `9a5b8c5`, confirmé par le terminal de l'utilisatrice.
+- Attention pour la suite : la suppression d'une ligne dans les imports décale les numéros des lignes suivantes ; les prochains emplacements devront être vérifiés.
+
 ### Essai 8 — Simplifier la dernière comparaison booléenne
 
 - Défaut : comparaison explicite d'un résultat avec `False` (E712).
