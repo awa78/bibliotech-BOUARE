@@ -37,6 +37,17 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 10 — Trier automatiquement les imports
+
+- Défaut : ordre des imports non conforme (I001), au début de `bibliotech.py`.
+- Correction : exécution ciblée de `python -m ruff check bibliotech.py --select I --fix`.
+- Résultat de la correction transmis par l'utilisatrice : `Found 1 error (1 fixed, 0 remaining).` Ce résultat concerne uniquement les règles de tri des imports sélectionnées.
+- Principe : conventions Python et organisation lisible des dépendances.
+- Incident de saisie : du texte de l'historique et le préfixe `(.venv) PS ...>` ont été recollés dans PowerShell, provoquant une saisie multiligne puis une `ParserError` sur `PS`. Solution : revenir à l'invite normale et exécuter uniquement la commande, sans préfixe ni sortie précédente. Aucune modification du programme n'était nécessaire pour cet incident.
+- Vérifications finales transmises par l'utilisatrice : **21 tests réussis en 2,95 s** ; **40 problèmes Ruff**, contre 41 avant cet essai et 55 initialement. Le signalement I001 a disparu.
+- État : correction validée par les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : les imports datetime explicites ont été enregistrés dans le commit `bbba5a2`, confirmé par le terminal de l'utilisatrice.
+
 ### Essai 9 — Rendre les imports datetime explicites
 
 - Défaut : import global `from datetime import *` et import redondant `import datetime`, rendant l'origine des noms moins claire (F403 et F405).

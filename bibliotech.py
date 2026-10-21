@@ -5,7 +5,6 @@ import os
 import sys
 from datetime import date, datetime, timedelta
 
-
 DATA = os.environ.get("BIBLIOTECH_DATA", "data")
 TODAY = None
 debug = False
