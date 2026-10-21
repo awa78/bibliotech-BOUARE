@@ -4,6 +4,19 @@
 
 Améliorer la lisibilité et la qualité du code sans changer le comportement de l'application. Conserver les tests fournis et vérifier chaque correction par petits pas.
 
+## Bilan avant remise du TP1
+
+- Contrôle effectué après le commit `5fa5b9a` : **21 tests réussis en 5,19 s**.
+- Ruff : **55 problèmes au départ, 5 restants**, soit 50 signalements supprimés. Les 5 restants concernent la complexité des méthodes `load` (9), `find` (10), `borrow_document` (19), `report` (14) et de la fonction `process` (15), pour un seuil configuré à 8.
+- Les dossiers `tests/` et `data/` sont inchangés par rapport à `v0-initial`. Aucun changement du code n'était en attente lors du contrôle.
+- Améliorations : imports explicites et ordonnés, conditions simplifiées, noms de méthodes explicites, durées nommées, fermeture automatique des fichiers, formatage, gestion des exceptions précisée, suppression d'un argument mutable partagé et centralisation des pénalités dans une fonction commune.
+- Le calcul des pénalités est réutilisé par les retours, les retards, l'export et le rapport. Les règles de tarif, réduction, plafond et arrondi restent regroupées dans un seul endroit.
+- Limites : la réussite des tests caractérise les scénarios fournis. Les exceptions interceptées ont été volontairement restreintes comme documenté dans les essais 22 et 23. La complexité restante pourra faire l'objet d'un refactoring ultérieur ; le guide TP1 exige une diminution des signalements Ruff, sans imposer zéro problème.
+- Organisation : travail individuel ; présence de `Massamba07` dans les collaborateurs confirmée par l'utilisatrice ; acceptation de l'invitation non précisée. Le lien du document partagé de promotion reste à demander à l'enseignant.
+- Git : étiquette `v0-initial` publiée, branche locale `tp1/nettoyage`. À terminer : commit de ce bilan, publication de la branche, puis ouverture d'une pull request vers `main` avec résumé des améliorations, sans fusion.
+
+Les entrées ci-dessous constituent le journal des essais ; les états « commit en attente » décrivent le moment de chaque essai et sont complétés par les confirmations des étapes suivantes. Le dernier calcul commun du rapport a été enregistré dans le commit `5fa5b9a`.
+
 ## Préparation — 21 octobre 2026
 
 - Dépôt : https://github.com/awa78/bibliotech-BOUARE
