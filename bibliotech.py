@@ -104,7 +104,7 @@ class Library:
         if mb is not None:
             bk = self.find("b", bid)
             if bk is not None:
-                if mb["active"] == True:
+                if mb["active"]:
                     # verif retards
                     late = False
                     for x in self.l:

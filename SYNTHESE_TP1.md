@@ -37,6 +37,35 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 5 — Simplifier la condition du membre actif
+
+- Défaut : comparaison explicite d'un booléen avec `True` (E712).
+- Emplacement : `bibliotech.py`, ligne 107, méthode `do_stuff()`.
+- Correction : remplacement de `if mb["active"] == True:` par `if mb["active"]:` en conservant l'indentation.
+- Principe : simplicité et lisibilité des conditions booléennes.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 2,93 s** avec la commande pytest utilisant le dossier temporaire distinct ; **47 problèmes Ruff**, contre 48 avant cette correction. Les signalements E712 passent de 4 à 3.
+- Étape 6 du guide confirmée par `git branch --show-current` : branche active `tp1/nettoyage`.
+- État : correction validée ; commit en attente. Les trois autres comparaisons booléennes proposées restent à traiter séparément.
+
+### Suivi du guide — accès et publication du point de départ
+
+- L'utilisatrice confirme travailler seule : aucun binôme à ajouter.
+- Elle confirme que `Massamba07` apparaît dans la liste des collaborateurs ; l'acceptation de l'invitation n'a pas été précisée.
+- Partage du lien du dépôt dans le document de promotion : en attente. L'utilisatrice doit demander à l'enseignant où trouver ce document.
+- Étape 5 : `git push origin v0-initial` exécuté par l'utilisatrice avec succès ; le terminal confirme `[new tag] v0-initial -> v0-initial`. Le point de départ est désormais publié sur GitHub.
+- Étape 6 : branche locale `tp1/nettoyage` déjà créée ; prochaine vérification avant de reprendre le nettoyage.
+
+### Vérification globale de reprise — 21 octobre 2026
+
+- Branche active : `tp1/nettoyage` ; dernier commit : `cec41ec`.
+- Tests relancés : **21 réussis en 3,29 s** (`.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider`).
+- Analyse Ruff relancée : **48 problèmes**, contre 55 initialement.
+- Les dossiers `tests/` et `data/` sont identiques à la version `v0-initial`.
+- Aucune modification du code en attente ; seul ce rapport a des modifications non commitées.
+- Vérification distante avec `git ls-remote` : seule la branche `main`, au commit initial, est présente parmi les références recherchées. La branche `tp1/nettoyage` et l'étiquette `v0-initial` ne sont pas encore publiées sur GitHub.
+- Prochaine correction proposée, non appliquée : simplifier les quatre comparaisons booléennes aux lignes 107, 114, 259 et 412.
+- Invitations des collaborateurs et dépôt du lien dans le document de promotion : non vérifiés, aucun accès à ces informations dans cet audit.
+
 ### Essai 4 — Comparaisons avec None : échec détecté et diagnostic
 
 - Objectif : remplacer les comparaisons `== None` et `!= None` par `is None` et `is not None` aux lignes 104, 106, 174 et 376.
@@ -45,7 +74,7 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 - Correction proposée : rétablir `if bk["kind"] in k:` à la ligne 306, puis remplacer `if TODAY == None:` par `if TODAY is None:` à la ligne 376.
 - Enseignement : les tests ont détecté une modification involontaire du comportement ; une baisse du nombre de problèmes Ruff ne suffit pas à valider une correction.
 - Résultat après correction transmis par l'utilisatrice : **21 tests réussis en 4,44 s**, et **48 problèmes Ruff**, contre 52 avant cet essai. Les quatre signalements E711 ont disparu. Les tests du rapport réussissent à nouveau.
-- État : correction validée par les tests fournis ; commit en attente.
+- État : correction validée par les tests fournis et enregistrée dans le commit local `cec41ec`, confirmé par le terminal de l'utilisatrice.
 
 ### Essai 3 — Supprimer un import inutilisé
 
