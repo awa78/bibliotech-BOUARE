@@ -6,6 +6,7 @@ import os
 import sys
 from datetime import date, datetime, timedelta
 
+# Règles métier : durées en jours, pénalités en euros par jour de retard.
 LOAN_DAYS = {"book": 21, "dvd": 7, "magazine": 3}
 DAILY_FEE = {"book": 0.5, "dvd": 1.0, "magazine": 0.2}
 MAX_LOANS = {"standard": 3, "student": 5, "premium": 8}
@@ -18,19 +19,24 @@ cache = {}
 
 
 def calculate_late_fee(days_late, book, member):
+    """Calculer la pénalité commune aux retours, retards, rapports et exports."""
     if days_late <= 0:
         return 0
 
+    # Un type inconnu conserve le tarif des livres, comme dans la version initiale.
     fee = days_late * DAILY_FEE.get(book["kind"], DAILY_FEE["book"])
 
+    # Les étudiants paient la moitié ; les membres premium sont exonérés.
     if member["type"] == "student":
         fee = fee * 0.5
     elif member["type"] == "premium":
         fee = 0
 
+    # La pénalité ne peut pas dépasser le prix du document.
     if fee > book["price"]:
         fee = book["price"]
 
+    # Arrondir une seule fois pour fournir un montant à deux décimales aux appelants.
     return round(fee, 2)
 
 
@@ -44,6 +50,7 @@ class Library:
 
     # chargement des donnees
     def load(self):
+        """Charger les trois CSV sans exécuter leur contenu."""
         with open(DATA + "/books.csv") as f:
             lines = f.readlines()
         for line in lines[1:]:
@@ -56,6 +63,7 @@ class Library:
                     "title": x[1],
                     "author": x[2],
                     "kind": x[3],
+                    # Un prix doit être numérique : ne jamais utiliser eval ici.
                     "price": float(x[4]),
                     "copies": int(x[5]),
                 }
@@ -162,7 +170,7 @@ class Library:
                         ):
                             late = True
                     if not late:
-                        # verif nombre max
+                        # Un type de membre inconnu garde la limite standard.
                         mx = MAX_LOANS.get(mb["type"], MAX_LOANS["standard"])
                         if self.count_active_loans(mid) < mx:
                             deja = False
@@ -175,7 +183,7 @@ class Library:
                                     deja = True
                             if not deja:
                                 if self.dispo(bid) > 0:
-                                    # duree selon le type
+                                    # Un document de type inconnu garde la durée livre.
                                     d = LOAN_DAYS.get(bk["kind"], LOAN_DAYS["book"])
                                     t = get_today()
                                     due = t + timedelta(days=d)
@@ -393,11 +401,13 @@ class Library:
 
     # systeme de plugins (pour plus tard)
     def register_plugin(self, name, fn, priority=0, options=None):
+        # Créer un dictionnaire distinct pour chaque appel sans options.
         if options is None:
             options = {}
         self.plugins[name] = {"fn": fn, "priority": priority, "options": options}
 
     def run_plugins(self, event, payload=None):
+        """Exécuter les plugins par priorité et journaliser leurs erreurs."""
         res = []
         for name in sorted(self.plugins, key=lambda n: self.plugins[n]["priority"]):
             try:
@@ -407,6 +417,7 @@ class Library:
                     )
                 )
             except Exception:
+                # Garder la trace complète ; Ctrl+C et SystemExit restent propagés.
                 LOGGER.exception("Echec du plugin %s pour l'evenement %s", name, event)
         return res
 

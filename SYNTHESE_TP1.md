@@ -50,6 +50,12 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Documentation des corrections de revue
+
+- Ajout de commentaires et de docstrings en français pour expliquer les unités des dictionnaires métier, les valeurs par défaut, les réductions, le plafond et l'arrondi des pénalités.
+- Documentation de la conversion numérique du prix (sans eval), de l'indépendance des options de plugins et de la journalisation des exceptions avec poursuite des plugins suivants.
+- Aucun changement de logique dans cette étape. Suite fournie : **21 tests réussis en 4,81 s**. Deux lignes de documentation trop longues signalées lors du premier contrôle ont été raccourcies avant le contrôle final.
+
 ### Revue de l'enseignant — correction des six remarques
 
 1. **Prix du CSV** : remplacement de `eval(x[4])` par `float(x[4])` dans `load()`. Un prix est désormais interprété uniquement comme un nombre, sans exécution de code.
