@@ -355,7 +355,9 @@ class Library:
         print("Export termine : " + str(n) + " lignes dans " + fname)
 
     # systeme de plugins (pour plus tard)
-    def register_plugin(self, name, fn, priority=0, options={}):
+    def register_plugin(self, name, fn, priority=0, options=None):
+        if options is None:
+            options = {}
         self.plugins[name] = {"fn": fn, "priority": priority, "options": options}
 
     def run_plugins(self, event, payload=None):

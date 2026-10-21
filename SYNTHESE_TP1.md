@@ -37,6 +37,18 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 11 — Éviter un dictionnaire mutable comme argument par défaut
+
+- Défaut : `options={}` dans la signature de `register_plugin()` (B006) ; le dictionnaire par défaut est partagé entre les appels.
+- Emplacement : `bibliotech.py`, méthode `register_plugin()`, ancienne ligne 358.
+- Correction : utiliser `options=None`, puis initialiser `options = {}` dans un bloc `if options is None:` avant l'enregistrement du plugin.
+- Principe : éviter un état mutable partagé implicitement entre les appels.
+- Incident de saisie : une nouvelle `ParserError` sur `PS` provenait du collage du préfixe du terminal ; les tests n'avaient pas démarré. La commande seule a ensuite été exécutée correctement.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,88 s** ; **39 problèmes Ruff**, contre 40 avant cet essai. Le signalement B006 a disparu. Ces résultats valident les scénarios fournis ; ils ne constituent pas un test spécifique de l'indépendance des dictionnaires entre plugins.
+- État : correction vérifiée avec la suite fournie ; commit en attente.
+- Suivi de l'essai précédent : le tri des imports a été enregistré dans le commit `8394c2a`, confirmé par le terminal de l'utilisatrice.
+- Les deux lignes ajoutées décalent les emplacements suivants ; les prochaines lignes seront vérifiées avant modification.
+
 ### Essai 10 — Trier automatiquement les imports
 
 - Défaut : ordre des imports non conforme (I001), au début de `bibliotech.py`.
