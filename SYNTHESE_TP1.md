@@ -37,6 +37,17 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 13 — Fermer automatiquement le fichier des membres
+
+- Défaut : ouverture de `members.csv` et fermeture manuelle avec `f.close()` (SIM115).
+- Emplacement : `bibliotech.py`, méthode `load()`, anciennes lignes 32 à 34.
+- Correction : utiliser `with open(DATA + "/members.csv") as f:`, avec `lines = f.readlines()` dans le bloc ; conserver la boucle de traitement après le bloc.
+- Principe : gestion fiable des ressources ; fermeture du fichier même en cas d'exception pendant la lecture.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,56 s** ; **37 problèmes Ruff**, contre 38 avant cet essai. Les signalements SIM115 passent de 4 à 3.
+- État : correction validée par les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : la lecture du catalogue avec `with` a été enregistrée dans le commit `4f87db5`, confirmé par le terminal de l'utilisatrice.
+- La suppression d'une ligne décale les emplacements suivants ; ils seront vérifiés avant la prochaine correction.
+
 ### Essai 12 — Fermer automatiquement le fichier du catalogue
 
 - Défaut : ouverture de `books.csv` et fermeture manuelle avec `f.close()` (SIM115).
