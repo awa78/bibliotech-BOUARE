@@ -37,6 +37,16 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 30 — Réutiliser le calcul des pénalités dans l'export
+
+- Défaut : duplication du calcul des pénalités dans `export()`.
+- Emplacement : `bibliotech.py`, méthode `export()`, anciennes lignes 438 à 456.
+- Correction : conserver le calcul du retard, ramener les jours négatifs à zéro, puis appeler `fee = calculate_late_fee(dl, bk, mb)` à la place des règles dupliquées ; conserver l'écriture de la ligne exportée.
+- Principes : DRY et réduction de la complexité ; retours, liste des retards et export utilisent le même calcul.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,90 s** ; **5 problèmes Ruff**, tous C901, contre 6 avant cet essai.
+- État : correction validée par les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : le calcul commun pour les retards a été enregistré dans le commit `5f58ff3`, confirmé par le terminal de l'utilisatrice.
+
 ### Essai 29 — Réutiliser le calcul des pénalités pour les retards
 
 - Défaut : duplication du calcul des tarifs, réductions, plafond et arrondi dans `overdue()`.

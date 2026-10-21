@@ -435,25 +435,9 @@ class Library:
                 else:
                     end = get_today()
                 dl = (end - datetime.strptime(x["due"], "%Y-%m-%d").date()).days
-                if dl > 0:
-                    if bk["kind"] == "book":
-                        fee = dl * 0.5
-                    elif bk["kind"] == "dvd":
-                        fee = dl * 1.0
-                    elif bk["kind"] == "magazine":
-                        fee = dl * 0.2
-                    else:
-                        fee = dl * 0.5
-                    if mb["type"] == "student":
-                        fee = fee * 0.5
-                    elif mb["type"] == "premium":
-                        fee = 0
-                    if fee > bk["price"]:
-                        fee = bk["price"]
-                else:
-                    fee = 0
+                if dl < 0:
                     dl = 0
-                fee = round(fee, 2)
+                fee = calculate_late_fee(dl, bk, mb)
                 f.write(
                     x["id"]
                     + sep
