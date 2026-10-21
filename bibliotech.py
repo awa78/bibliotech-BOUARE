@@ -40,9 +40,8 @@ class Library:
             else:
                 a = False
             self.m.append({"id": x[0], "name": x[1], "email": x[2], "type": x[3], "active": a})
-        f = open(DATA + "/loans.csv")
-        lines = f.readlines()
-        f.close()
+        with open(DATA + "/loans.csv") as f:
+            lines = f.readlines()
         for line in lines[1:]:
             if line.strip() == "":
                 continue

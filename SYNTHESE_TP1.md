@@ -37,6 +37,17 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 14 — Fermer automatiquement le fichier des emprunts à la lecture
+
+- Défaut : ouverture de `loans.csv` en lecture et fermeture manuelle avec `f.close()` (SIM115).
+- Emplacement : `bibliotech.py`, méthode `load()`, anciennes lignes 43 à 45.
+- Correction : utiliser `with open(DATA + "/loans.csv") as f:`, avec `lines = f.readlines()` dans le bloc ; conserver la boucle de traitement après le bloc.
+- Principe : gestion fiable des ressources ; fermeture du fichier même en cas d'exception pendant la lecture.
+- Vérifications transmises par l'utilisatrice : **21 tests réussis en 3,77 s** ; **36 problèmes Ruff**, contre 37 avant cet essai. Les signalements SIM115 passent de 3 à 2.
+- État : correction validée par les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : la lecture du fichier des membres avec `with` a été enregistrée dans le commit `90132ab`, confirmé par le terminal de l'utilisatrice.
+- La suppression d'une ligne décale les emplacements suivants ; ils seront vérifiés avant la prochaine correction.
+
 ### Essai 13 — Fermer automatiquement le fichier des membres
 
 - Défaut : ouverture de `members.csv` et fermeture manuelle avec `f.close()` (SIM115).
