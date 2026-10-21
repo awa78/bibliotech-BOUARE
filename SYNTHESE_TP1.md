@@ -37,6 +37,18 @@ Résultats : `21 passed` et `Found 54 errors.`. Le code de sortie 1 de Ruff indi
 
 ## Suivi
 
+### Essai 27 — Nommer les durées d'emprunt : constantes manquantes
+
+- Objectif : remplacer les durées isolées 21, 7 et 3 par `BOOK_LOAN_DAYS`, `DVD_LOAN_DAYS` et `MAGAZINE_LOAN_DAYS`.
+- Premier résultat transmis : **19 tests réussis et 2 échoués en 3,89 s**, scénarios `borrow_limit` et `borrow_ok`.
+- Diagnostic : les noms sont utilisés dans `borrow_document()`, mais leurs définitions ne figurent pas dans le fichier enregistré. Les emprunts qui calculent une échéance ne peuvent donc pas utiliser ces constantes.
+- Correction proposée : ajouter les trois définitions au niveau du module, après les imports, avec les valeurs 21, 7 et 3 ; conserver ces mêmes valeurs pour préserver les règles métier.
+- Résultat après ajout des constantes transmis par l'utilisatrice : **21 tests réussis en 3,37 s** ; Ruff signale 8 C901 et 1 I001 (organisation du bloc des imports).
+- Ajustement : `python -m ruff check bibliotech.py --select I --fix` a corrigé le signalement I001 (`1 fixed`).
+- Vérifications finales transmises par l'utilisatrice : **21 tests réussis en 3,35 s**, puis **8 problèmes Ruff**, tous C901. Les durées métier sont conservées ; les noms rendent leur rôle explicite sans réduire la complexité.
+- État : correction validée par les tests fournis ; commit en attente.
+- Suivi de l'essai précédent : le renommage en `count_active_loans` a été enregistré dans le commit `f7b4073`, confirmé par le terminal de l'utilisatrice.
+
 ### Essai 26 — Donner un nom explicite au comptage des emprunts en cours
 
 - Défaut : nom `nb` trop vague pour identifier le rôle de la méthode.

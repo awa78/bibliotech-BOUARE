@@ -6,6 +6,10 @@ import sys
 from contextlib import suppress
 from datetime import date, datetime, timedelta
 
+BOOK_LOAN_DAYS = 21
+DVD_LOAN_DAYS = 7
+MAGAZINE_LOAN_DAYS = 3
+
 DATA = os.environ.get("BIBLIOTECH_DATA", "data")
 TODAY = None
 debug = False
@@ -162,13 +166,13 @@ class Library:
                                 if self.dispo(bid) > 0:
                                     # duree selon le type
                                     if bk["kind"] == "book":
-                                        d = 21
+                                        d =BOOK_LOAN_DAYS
                                     elif bk["kind"] == "dvd":
-                                        d = 7
+                                        d = DVD_LOAN_DAYS
                                     elif bk["kind"] == "magazine":
-                                        d = 3
+                                        d = MAGAZINE_LOAN_DAYS
                                     else:
-                                        d = 21
+                                        d = BOOK_LOAN_DAYS
                                     t = get_today()
                                     due = t + timedelta(days=d)
                                     mx2 = 0
