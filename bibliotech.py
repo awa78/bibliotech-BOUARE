@@ -16,6 +16,23 @@ DATA = os.environ.get("BIBLIOTECH_DATA", "data")
 TODAY = None
 debug = False
 cache = {}
+def late_fee(
+    days_late: int, kind: str, member_type: str, price: float
+) -> float:
+    """Pénalité de retard, réduite selon le membre et plafonnée au prix."""
+    if days_late <= 0:
+        return 0.0
+
+    fee = days_late * DAILY_FEE.get(kind, DAILY_FEE["book"])
+
+    if member_type == "student":
+        fee *= 0.5
+    elif member_type == "premium":
+        fee = 0.0
+
+    return round(min(fee, price), 2)
+
+
 
 
 def calculate_late_fee(days_late, book, member):

@@ -104,8 +104,16 @@ La commande affiche seulement les blocs de note C ou supérieure : aucune note D
 - Section 3.1 : `tests/test_borrow.py` contient les six cas demandés, avec le nom actuel `borrow_document` à la place de `do_stuff` : membre inactif, retard existant, document déjà emprunté, indisponibilité, limite atteinte et emprunt accepté avec identifiant L013 et échéance au 28 octobre 2026.
 - Vérification progressive : les tests d'emprunt passent de 1 à 6 cas réussis au fil de leur ajout. Vérification commune transmise : `tests/test_borrow.py` et `tests/test_caracterisation.py` donnent **27 tests réussis en 4,57 s**.
 - `tests/test_rules.py` reste temporairement exclu de cette vérification ciblée : son erreur d'import sur `late_fee` est toujours le rouge attendu de la section 2.1. Il ne doit pas être commité avant l'ajout de la fonction et le passage au vert.
-- État : section 3.1 vérifiée ; commit des tests d'emprunt en attente. Prochaine étape : section 2.2, écrire `late_fee` à côté du calcul existant sans encore modifier les quatre appels.
-- Les sections 2.2 et 2.3 restent à faire : aucune fonction du TP2 n'a encore été modifiée. Aucun bonus n'est entrepris.
+- Section 3.1 : tests des emprunts enregistrés dans le commit `fe6e0d9`, confirmé par le terminal de l'utilisatrice.
+- Aucun bonus n'est entrepris.
+
+### Section 2.2 — Ajouter la fonction late_fee à côté du calcul existant
+
+- Ajout de `late_fee(days_late: int, kind: str, member_type: str, price: float) -> float`, avant `calculate_late_fee`, sans modifier les quatre appels existants.
+- La fonction utilise `DAILY_FEE`, une clause de garde sans retard, les réductions étudiant/premium, `min` pour le plafond et `round(..., 2)` pour l'arrondi.
+- Les 10 cas paramétrés de `tests/test_rules.py` vérifient les résultats avec `pytest.approx`.
+- Résultat transmis : **37 tests réussis en 4,34 s** (21 de caractérisation, 6 d'emprunt, 10 de pénalités). Le rouge attendu de la section 2.1 est résolu.
+- État : fonction et tests prêts à être commités ensemble. Prochaine étape : section 2.3, remplacer les appels un par un, avec tests et commit après chacun. Le calcul existant sera retiré quand il ne sera plus utilisé.
 
 ## Installation
 
