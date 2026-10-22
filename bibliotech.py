@@ -33,30 +33,6 @@ def late_fee(
     return round(min(fee, price), 2)
 
 
-
-
-def calculate_late_fee(days_late, book, member):
-    """Calculer la pénalité commune aux retours, retards, rapports et exports."""
-    if days_late <= 0:
-        return 0
-
-    # Un type inconnu conserve le tarif des livres, comme dans la version initiale.
-    fee = days_late * DAILY_FEE.get(book["kind"], DAILY_FEE["book"])
-
-    # Les étudiants paient la moitié ; les membres premium sont exonérés.
-    if member["type"] == "student":
-        fee = fee * 0.5
-    elif member["type"] == "premium":
-        fee = 0
-
-    # La pénalité ne peut pas dépasser le prix du document.
-    if fee > book["price"]:
-        fee = book["price"]
-
-    # Arrondir une seule fois pour fournir un montant à deux décimales aux appelants.
-    return round(fee, 2)
-
-
 class Library:
     def __init__(self):
         self.b = []
@@ -396,7 +372,7 @@ class Library:
                 dl = (end - datetime.strptime(x["due"], "%Y-%m-%d").date()).days
                 if dl < 0:
                     dl = 0
-                fee = calculate_late_fee(dl, bk, mb)
+                fee = late_fee(dl, bk["kind"], mb["type"], bk["price"])
                 f.write(
                     sep.join(
                         [

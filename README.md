@@ -135,6 +135,16 @@ La commande affiche seulement les blocs de note C ou supérieure : aucune note D
 - Remplacement de l'appel de `report()` par `late_fee(j, bk["kind"], mb["type"], bk["price"])`, en conservant le calcul des jours et le cumul des pénalités.
 - Résultat transmis : **37 tests réussis en 5,01 s**. Troisième remplacement validé ; commit en attente. L'appel de `export()` reste à adapter avant de retirer le calcul devenu inutilisé.
 
+### Section 2.3 — Quatrième remplacement dans export et fin du niveau 1
+
+- Le remplacement dans `report()` a été enregistré dans le commit `d01647c`.
+- Remplacement du dernier appel par `late_fee(dl, bk["kind"], mb["type"], bk["price"])` dans `export()`, en conservant la remise à zéro des jours négatifs. Vérification transmise : **37 tests réussis en 5,11 s**.
+- Suppression de `calculate_late_fee`, devenue inutilisée. Vérification après suppression : **37 tests réussis en 4,81 s**.
+- Contrôle du fichier : une définition de `late_fee` et quatre appels, dans `ret`, `overdue`, `report` et `export` ; aucune référence à `calculate_late_fee`.
+- Le contrat du niveau 1 est couvert par les 10 cas paramétrés. Les 21 tests de caractérisation et les 6 tests d'emprunt restent verts.
+- État : niveau 1 vérifié ; dernier commit de l'extraction en attente. Les cinq commits attendus correspondent à l'ajout de la fonction avec ses tests, puis aux quatre remplacements progressifs.
+- Prochaine étape : niveau 2, section 3.2. Les tests de la section 3.1 sont déjà enregistrés ; vérifier les dictionnaires métier existants avant les clauses de garde de la section 3.3.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.
