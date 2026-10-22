@@ -115,6 +115,14 @@ La commande affiche seulement les blocs de note C ou supérieure : aucune note D
 - Résultat transmis : **37 tests réussis en 4,34 s** (21 de caractérisation, 6 d'emprunt, 10 de pénalités). Le rouge attendu de la section 2.1 est résolu.
 - État : fonction et tests prêts à être commités ensemble. Prochaine étape : section 2.3, remplacer les appels un par un, avec tests et commit après chacun. Le calcul existant sera retiré quand il ne sera plus utilisé.
 
+### Section 2.3 — Premier remplacement dans ret : diagnostic
+
+- La fonction et ses tests ont été enregistrés dans le commit `bd98aa7`.
+- Premier remplacement : appel à `late_fee(d, bk["kind"], mb["type"], bk["price"])` dans `ret()`.
+- Premier essai transmis : **33 tests réussis et 4 échoués en 4,52 s**, concernant les retours.
+- Diagnostic par `git diff` : modification involontaire de `datetime.strptime` en `datetime.strptie` dans le calcul des jours (ligne 265). L'appel à `late_fee` est correct.
+- Correction effectuée : rétablissement de `strptime`. Nouvelle sortie transmise : **37 tests réussis en 4,31 s**. Le premier remplacement dans `ret()` est validé ; commit en attente. Les tests de caractérisation et leurs références restent inchangés.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.

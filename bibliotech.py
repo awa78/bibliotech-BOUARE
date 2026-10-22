@@ -265,7 +265,7 @@ class Library:
         d = (t - datetime.strptime(ln["due"], "%Y-%m-%d").date()).days
         if d < 0:
             d = 0
-        f = calculate_late_fee(d, bk, mb)
+        f = late_fee(d, bk["kind"], mb["type"], bk["price"])
         ln["returned"] = str(t)
         ln["fee"] = f
         self.save()
