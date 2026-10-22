@@ -152,7 +152,13 @@ class Library:
             and datetime.strptime(loan["due"], "%Y-%m-%d").date() < get_today()
             for loan in self.l
         )
-    
+    def is_borrowing(self, member_id, book_id):
+        return any(
+            loan["member"] == member_id
+            and loan["book"] == book_id
+            and loan["returned"] == ""
+            for loan in self.l
+        )
 
     # emprunter un document
     def borrow_document(self, mid, bid):
@@ -167,14 +173,7 @@ class Library:
                         # Un type de membre inconnu garde la limite standard.
                         mx = MAX_LOANS.get(mb["type"], MAX_LOANS["standard"])
                         if self.count_active_loans(mid) < mx:
-                            deja = False
-                            for x in self.l:
-                                if (
-                                    x["member"] == mid
-                                    and x["book"] == bid
-                                    and x["returned"] == ""
-                                ):
-                                    deja = True
+                            deja = self.is_borrowing(mid, bid)
                             if not deja:
                                 if self.dispo(bid) > 0:
                                     # Un document de type inconnu garde la durée livre.

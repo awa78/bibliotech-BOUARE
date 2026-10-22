@@ -89,6 +89,14 @@ Cette liste décrit le travail prévu, pas le travail effectué. Les résultats 
 - Résultat transmis : **37 tests réussis en 4,36 s**.
 - État : extraction vérifiée ; commit en attente. Les autres méthodes de la section 3.3 et le renommage final en `borrow` restent à réaliser.
 
+### Section 3.3 — Extraire la recherche d'un document déjà emprunté
+
+- L'extraction de `has_overdue_loan` a été enregistrée dans le commit `0c240e7`.
+- Ajout de `is_borrowing(member_id, book_id)` avec `any` pour vérifier l'existence d'un emprunt non rendu du membre pour ce document.
+- Remplacement de la boucle et du drapeau par `deja = self.is_borrowing(mid, bid)`, en conservant le refus existant et sa priorité.
+- Résultat transmis : **37 tests réussis en 4,97 s**.
+- État : extraction vérifiée ; commit en attente. La section 3.3 continue ensuite avec les méthodes restantes et les clauses de garde.
+
 ### Étape 1 : préparation du dépôt — 22 octobre 2026
 
 - Fusion du TP1 par l'enseignant, récupérée sur `main` au commit `7481492`.
