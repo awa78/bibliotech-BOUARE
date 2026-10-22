@@ -123,6 +123,12 @@ La commande affiche seulement les blocs de note C ou supérieure : aucune note D
 - Diagnostic par `git diff` : modification involontaire de `datetime.strptime` en `datetime.strptie` dans le calcul des jours (ligne 265). L'appel à `late_fee` est correct.
 - Correction effectuée : rétablissement de `strptime`. Nouvelle sortie transmise : **37 tests réussis en 4,31 s**. Le premier remplacement dans `ret()` est validé ; commit en attente. Les tests de caractérisation et leurs références restent inchangés.
 
+### Section 2.3 — Deuxième remplacement dans overdue
+
+- Le remplacement dans `ret()` a été enregistré dans le commit `e819945`.
+- Remplacement de l'appel de `overdue()` par `late_fee(nbj, book["kind"], member["type"], book["price"])`, sans modifier le calcul des jours ni les affichages.
+- Résultat transmis : **37 tests réussis en 5,15 s**. Deuxième remplacement validé ; commit en attente. Les appels de `report()` et `export()` restent à adapter.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.

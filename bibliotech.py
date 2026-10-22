@@ -293,7 +293,7 @@ class Library:
             member = self.find("m", x["member"])
             nbj = (get_today() - datetime.strptime(x["due"], "%Y-%m-%d").date()).days
             # calcul penalite
-            p = calculate_late_fee(nbj, book, member)
+            p = late_fee(nbj, book["kind"], member["type"], book["price"])
             total = total + p
             print(
                 f"{x['id']} | {member['name']} | {book['title']} | "
