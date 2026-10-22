@@ -75,6 +75,20 @@ Cette liste décrit le travail prévu, pas le travail effectué. Les résultats 
 
 ## TP2 — Suivi du refactoring
 
+### Avancement actuel
+
+- Niveau 1 terminé avec le commit `e960d2d` : une fonction `late_fee`, quatre appels et 37 tests réussis au dernier contrôle.
+- Niveau 2, section 3.1 : les six tests d'emprunt sont déjà écrits et enregistrés.
+- Section 3.2 vérifiée : `LOAN_DAYS` contient 21/7/3 jours ; `MAX_LOANS` contient les limites standard 3, étudiant 5 et premium 8. Ces dictionnaires sont déjà utilisés dans la méthode d'emprunt et se trouvent à côté de `DAILY_FEE`. Aucune modification supplémentaire n'est nécessaire pour cette section, réalisée au TP1 après revue.
+- Prochaine étape : section 3.3, décomposer l'emprunt avec les méthodes demandées et des clauses de garde, en conservant l'ordre des refus et leurs messages. Aucun bonus n'est entrepris.
+
+### Section 3.3 — Extraire la recherche d'un emprunt en retard
+
+- Ajout de `has_overdue_loan(member_id)`, méthode demandée par le guide, avec une expression `any` sur les emprunts non rendus du membre dont l'échéance est dépassée.
+- Remplacement de la boucle et du drapeau dans `borrow_document()` par `late = self.has_overdue_loan(mid)`, sans modifier les refus ni leur ordre.
+- Résultat transmis : **37 tests réussis en 4,36 s**.
+- État : extraction vérifiée ; commit en attente. Les autres méthodes de la section 3.3 et le renommage final en `borrow` restent à réaliser.
+
 ### Étape 1 : préparation du dépôt — 22 octobre 2026
 
 - Fusion du TP1 par l'enseignant, récupérée sur `main` au commit `7481492`.

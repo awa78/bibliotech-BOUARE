@@ -33,6 +33,7 @@ def late_fee(
     return round(min(fee, price), 2)
 
 
+
 class Library:
     def __init__(self):
         self.b = []
@@ -144,6 +145,14 @@ class Library:
             if x["book"] == bid and x["returned"] == "":
                 n = n + 1
         return bk["copies"] - n
+    def has_overdue_loan(self, member_id):
+        return any(
+            loan["member"] == member_id
+            and loan["returned"] == ""
+            and datetime.strptime(loan["due"], "%Y-%m-%d").date() < get_today()
+            for loan in self.l
+        )
+    
 
     # emprunter un document
     def borrow_document(self, mid, bid):
@@ -153,15 +162,7 @@ class Library:
             if bk is not None:
                 if mb["active"]:
                     # verif retards
-                    late = False
-                    for x in self.l:
-                        if (
-                            x["member"] == mid
-                            and x["returned"] == ""
-                            and datetime.strptime(x["due"], "%Y-%m-%d").date()
-                            < get_today()
-                        ):
-                            late = True
+                    late = self.has_overdue_loan(mid)
                     if not late:
                         # Un type de membre inconnu garde la limite standard.
                         mx = MAX_LOANS.get(mb["type"], MAX_LOANS["standard"])
