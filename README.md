@@ -13,7 +13,7 @@ Le point de départ est une application fonctionnelle volontairement difficile �
 | TP1 : nettoyage et corrections de revue | Réalisés sur `tp1/nettoyage` |
 | Remise du TP1 | [Pull request nº 1](https://github.com/awa78/bibliotech-BOUARE/pull/1) |
 | Version initiale de comparaison | Étiquette Git `v0-initial` |
-| TP2 : refactoring et tests unitaires | Préparation publiée ; écriture des tests avant refactoring en cours |
+| TP2 : refactoring et tests unitaires | Niveaux 1 et 2 vérifiés ; commit final, publication et revue à terminer |
 | Soutenance | À préparer après le TP2 |
 
 Le TP1 a été fusionné par l'enseignant et récupéré sur `main` avant la création de la branche du TP2. Le suivi ci-dessous distingue les étapes effectuées et celles restant à réaliser.
@@ -77,6 +77,20 @@ Cette liste décrit le travail prévu, pas le travail effectué. Les résultats 
 
 ### Avancement actuel
 
+Mise à jour après la section 3.4 : les niveaux obligatoires 1 et 2 ont passé leurs vérifications. Les entrées suivantes retracent les étapes précédentes.
+
+### Section 3.4 — Renommage final et mesure après refactoring
+
+- Clauses de garde enregistrées dans le commit `45dbfc3`.
+- Renommage de `borrow_document` en `borrow`, avec mise à jour de l'appel dans `process()` et des huit appels dans les six tests d'emprunt.
+- Vérification transmise : **37 tests réussis en 4,37 s** (21 de caractérisation, 6 d'emprunt et 10 de pénalités).
+- `radon cc -s -n C bibliotech.py` affiche uniquement `process` C (16) et `report` C (14) : aucune fonction en note D ou supérieure.
+- `radon cc -s bibliotech.py` confirme **borrow A (4)**, contre **borrow_document C (18)** au départ ; `refusal_reason` B (6), `has_overdue_loan` A (4), `is_borrowing` A (4) et `create_loan` A (3).
+- Critères techniques obligatoires vérifiés : calcul unique dans `late_fee`, tests verts, méthode `borrow` en A et aucune fonction en D. Aucun bonus réalisé.
+- État : commit de la section 3.4 en attente, puis publication et pull request selon le modèle du guide. La revue croisée et la validation de l'enseignant restent nécessaires avant fusion.
+
+Historique des étapes précédentes :
+
 - Niveau 1 terminé avec le commit `e960d2d` : une fonction `late_fee`, quatre appels et 37 tests réussis au dernier contrôle.
 - Niveau 2, section 3.1 : les six tests d'emprunt sont déjà écrits et enregistrés.
 - Section 3.2 vérifiée : `LOAN_DAYS` contient 21/7/3 jours ; `MAX_LOANS` contient les limites standard 3, étudiant 5 et premium 8. Ces dictionnaires sont déjà utilisés dans la méthode d'emprunt et se trouvent à côté de `DAILY_FEE`. Aucune modification supplémentaire n'est nécessaire pour cette section, réalisée au TP1 après revue.
@@ -120,9 +134,9 @@ Commande exécutée : `radon cc -s -n C bibliotech.py`.
 
 | Fonction | Note initiale TP2 | Complexité initiale TP2 | Après refactoring |
 | --- | --- | --- | --- |
-| `Library.borrow_document` | C | 18 | À mesurer |
-| `process` | C | 16 | À mesurer |
-| `Library.report` | C | 14 | À mesurer |
+| `Library.borrow_document` → `Library.borrow` | C | 18 | A (4) |
+| `process` | C | 16 | C (16) |
+| `Library.report` | C | 14 | C (14) |
 
 La commande affiche seulement les blocs de note C ou supérieure : aucune note D n'est signalée à ce départ. Les résultats diffèrent de l'exemple du guide, car le code a déjà été amélioré au TP1. L'objectif du niveau 2 reste d'obtenir une méthode `borrow` de note A. Les niveaux obligatoires et les nouveaux tests unitaires restent à réaliser.
 

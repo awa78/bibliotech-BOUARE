@@ -207,7 +207,7 @@ class Library:
         )
 
     # emprunter un document
-    def borrow_document(self, member_id, book_id):
+    def borrow (self, member_id, book_id):
         member = self.find("m", member_id)
         if member is None:
             print("Erreur : membre inconnu")
@@ -457,7 +457,7 @@ def process(args):
         if len(args) < 3:
             print("Usage : borrow <id_membre> <id_document>")
             return 1
-        r = lib.borrow_document(args[1], args[2])
+        r = lib.borrow(args[1], args[2])
         if not r:
             return 2
     elif cmd == "return":
