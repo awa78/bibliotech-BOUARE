@@ -2,7 +2,76 @@
 
 Application en ligne de commande de gestion d'une bibliothèque municipale : catalogue, membres, emprunts, retours, pénalités de retard, rappels et rapports.
 
-L'application **fonctionne**, mais son code a été écrit à la hâte et modifié par de nombreuses personnes. C'est le projet fil rouge du module *Clean Code et Qualité logicielle* : vous allez l'améliorer pendant trois jours **sans changer son comportement**.
+Projet fil rouge du module *Clean Code et Qualité logicielle*, réalisé individuellement par **Awa BOUARE**. Le travail comprend le **TP1 (nettoyage)**, le **TP2 (refactoring et tests unitaires)**, puis une soutenance.
+
+Le point de départ est une application fonctionnelle volontairement difficile à maintenir. L'objectif est d'améliorer sa lisibilité et sa structure en préservant les comportements vérifiés par les tests de caractérisation. Ce README présente le bilan du travail ; [SYNTHESE_TP1.md](SYNTHESE_TP1.md) conserve le journal détaillé des corrections, essais et difficultés.
+
+## État du projet avant le TP2
+
+| Étape | État |
+| --- | --- |
+| TP1 : nettoyage et corrections de revue | Réalisés sur `tp1/nettoyage` |
+| Remise du TP1 | [Pull request nº 1](https://github.com/awa78/bibliotech-BOUARE/pull/1) |
+| Version initiale de comparaison | Étiquette Git `v0-initial` |
+| TP2 : refactoring et tests unitaires | Pas encore commencé |
+| Soutenance | À préparer après le TP2 |
+
+La fusion du TP1 et la validation de l'enseignant sont à vérifier sur GitHub avant de créer la branche du TP2. Aucun résultat du TP2 n'est présenté comme acquis dans ce bilan.
+
+## TP1 — Travail réalisé
+
+### Corrections et justification
+
+| Problème initial | Travail effectué | Intérêt |
+| --- | --- | --- |
+| Imports multiples, implicites ou inutilisés | Imports séparés, explicites et triés ; suppression de `json` inutilisé | Dépendances plus faciles à identifier |
+| Comparaisons booléennes et conditions imbriquées | Conditions directes, `is None` et `is not None`, regroupement de critères avec `and` | Lecture plus simple |
+| Noms vagues | `do_stuff` devient `borrow_document` ; `nb` devient `count_active_loans` | Intentions explicites |
+| Durées, tarifs et limites dispersés | Dictionnaires `LOAN_DAYS`, `DAILY_FEE` et `MAX_LOANS` | Règles métier regroupées et valeurs par défaut conservées |
+| Calcul des pénalités copié quatre fois | Fonction commune `calculate_late_fee`, utilisée dans `ret`, `overdue`, `report` et `export` | Application de DRY ; une seule règle à maintenir |
+| Fichiers fermés manuellement | Utilisation de `with` pour les cinq ouvertures de fichiers | Fermeture même en cas d'erreur |
+| `eval` utilisé pour lire les prix | Remplacement par `float` | Un prix de CSV ne peut plus être exécuté comme du code Python |
+| Erreurs masquées | Exceptions de conversion précisées ; erreurs des plugins journalisées avec leur trace | Diagnostic possible sans arrêter les plugins suivants |
+| Dictionnaire mutable par défaut | `options=None`, puis création d'un dictionnaire pour chaque appel | Évite le partage implicite d'état |
+| Présentation irrégulière et longues concaténations | Formatage Ruff, f-strings et `join` pour les messages et CSV | Code plus lisible, sorties conservées dans les scénarios testés |
+| Documentation insuffisante | Commentaires sur les règles, valeurs par défaut et choix importants | Préparation de la maintenance et de la soutenance |
+
+La fonction `calculate_late_fee` gère l'absence de retard, le tarif journalier, les réductions étudiant/premium, le plafond au prix du document et l'arrondi au centime. L'arrondi redondant dans le cumul du rapport a été supprimé après revue.
+
+### Résultats et vérifications du TP1
+
+| Indicateur | Version initiale | Fin du TP1, après revue |
+| --- | --- | --- |
+| Tests de caractérisation fournis | 21 réussis | 21 réussis |
+| Signalements Ruff | 55 | 5, tous liés à la complexité (`C901`) |
+| Emplacements du calcul des pénalités | 4 copies | 1 fonction commune et 4 appels |
+
+Les fichiers `tests/test_caracterisation.py`, `tests/golden/` et les données de référence sont restés inchangés. Les tests vérifient les scénarios fournis : leur réussite ne prouve pas l'absence de bugs dans tous les cas possibles.
+
+Des vérifications ciblées supplémentaires ont été exécutées pendant la revue : rejet d'une expression Python dans un prix sans exécution, présence du nom et de la trace d'un plugin défaillant dans les journaux, poursuite du plugin suivant, propagation de `SystemExit`, tarifs, réductions, plafond et cas sans retard. Le script de vérification était extérieur au dépôt ; ces contrôles ne constituent pas encore une suite de tests unitaires versionnée. Celle-ci sera ajoutée au TP2.
+
+### Difficultés rencontrées et solutions
+
+- Accès refusé au dossier temporaire de pytest et à son cache : utilisation d'un autre dossier temporaire et désactivation du cache pour les exécutions concernées.
+- Collage du préfixe PowerShell avec la commande : exécution des commandes seules, une à la fois.
+- Conflit entre un onglet VS Code ancien et le fichier enregistré : rechargement depuis le disque avant reprise des modifications.
+- Erreurs d'indentation dans le compteur de l'export : diagnostic par `git diff`, puis correction avant commit.
+- Renommage incomplet de la méthode d'emprunt et constantes non définies : mise en cohérence des définitions et des appels, puis nouvelle exécution des tests.
+
+Les échecs observés et leur résolution sont détaillés dans [SYNTHESE_TP1.md](SYNTHESE_TP1.md). Les corrections ont été enregistrées par étapes ; les remarques de revue ont donné lieu à de nouveaux commits. Le formatage initial et les corrections de revue sont identifiables par commit, sans réécriture de l'historique publié.
+
+### Limites et transition vers le TP2
+
+Cinq fonctions restent au-dessus du seuil de complexité Ruff : `load`, `find`, `borrow_document`, `report` et `process`. Cette mesure Ruff n'est pas une mesure Radon : la mesure de départ Radon reste à effectuer au TP2.
+
+Le calcul des pénalités et les dictionnaires de règles ayant déjà été introduits au TP1, le TP2 partira de cet état réel. Il faudra notamment :
+
+1. Préparer `main` et la branche `tp2/refactoring`, configurer pytest et installer Radon.
+2. Écrire les tests unitaires des pénalités et adapter le calcul au contrat `late_fee(days_late, kind, member_type, price)` demandé.
+3. Tester les comportements d'emprunt avant de réorganiser la méthode avec des clauses de garde et les méthodes prévues par le guide.
+4. Mesurer la complexité avant/après, puis documenter la revue croisée et les corrections.
+
+Cette liste décrit le travail prévu, pas le travail effectué. Les résultats et les éventuels bonus seront ajoutés à ce README au fur et à mesure du TP2.
 
 ## Installation
 
@@ -10,8 +79,14 @@ Python 3.10 ou plus récent est nécessaire.
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate        # Windows : .venv\Scripts\activate
+source .venv/bin/activate        # Linux / macOS
 pip install -r requirements.txt
+```
+
+Sous Windows PowerShell, l'activation s'effectue avec :
+
+```powershell
+.\.venv\Scripts\Activate.ps1
 ```
 
 ## Utilisation
@@ -52,7 +127,15 @@ Un emprunt est refusé si le membre est inactif, s'il a un emprunt en retard, s'
 pytest
 ```
 
-Le dossier `tests/` contient des **tests de caractérisation** : ils lancent l'application et comparent sa sortie à des résultats de référence. Ils ne dépendent pas de l'organisation interne du code. Vous pouvez donc renommer, découper et déplacer librement le code de `bibliotech.py` : **tant que les tests restent verts, le comportement est préservé.**
+Le dossier `tests/` contient des **tests de caractérisation** : ils lancent l'application et comparent sa sortie à des résultats de référence. Ils ne dépendent pas de l'organisation interne du code. Leur réussite indique que les comportements couverts sont préservés après les modifications de `bibliotech.py`.
+
+Commande utilisée sous PowerShell en cas de problème d'accès au dossier temporaire ou au cache :
+
+```powershell
+python -m pytest -q -p no:cacheprovider --basetemp "$env:TEMP\bibliotech-tests-awa"
+```
+
+Le dossier indiqué par `--basetemp` est réservé à ces tests : pytest peut le vider lors d'une nouvelle exécution.
 
 Ne modifiez pas `tests/test_caracterisation.py` ni le dossier `tests/golden/`.
 
