@@ -129,6 +129,12 @@ La commande affiche seulement les blocs de note C ou supérieure : aucune note D
 - Remplacement de l'appel de `overdue()` par `late_fee(nbj, book["kind"], member["type"], book["price"])`, sans modifier le calcul des jours ni les affichages.
 - Résultat transmis : **37 tests réussis en 5,15 s**. Deuxième remplacement validé ; commit en attente. Les appels de `report()` et `export()` restent à adapter.
 
+### Section 2.3 — Troisième remplacement dans report
+
+- Le remplacement dans `overdue()` a été enregistré dans le commit `ba98289`.
+- Remplacement de l'appel de `report()` par `late_fee(j, bk["kind"], mb["type"], bk["price"])`, en conservant le calcul des jours et le cumul des pénalités.
+- Résultat transmis : **37 tests réussis en 5,01 s**. Troisième remplacement validé ; commit en attente. L'appel de `export()` reste à adapter avant de retirer le calcul devenu inutilisé.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.

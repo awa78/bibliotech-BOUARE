@@ -332,7 +332,7 @@ class Library:
                     bk = self.find("b", x["book"])
                     mb = self.find("m", x["member"])
                     j = (get_today() - due).days
-                    pen = calculate_late_fee(j, bk, mb)
+                    pen = late_fee(j, bk["kind"], mb["type"], bk["price"])
                     a_payer = a_payer + pen
             else:
                 encaisse = encaisse + x["fee"]
