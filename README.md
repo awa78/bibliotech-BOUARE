@@ -13,10 +13,10 @@ Le point de départ est une application fonctionnelle volontairement difficile �
 | TP1 : nettoyage et corrections de revue | Réalisés sur `tp1/nettoyage` |
 | Remise du TP1 | [Pull request nº 1](https://github.com/awa78/bibliotech-BOUARE/pull/1) |
 | Version initiale de comparaison | Étiquette Git `v0-initial` |
-| TP2 : refactoring et tests unitaires | Pas encore commencé |
+| TP2 : refactoring et tests unitaires | Étape 1 : préparation et mesure initiale effectuées ; commit et publication en attente |
 | Soutenance | À préparer après le TP2 |
 
-La fusion du TP1 et la validation de l'enseignant sont à vérifier sur GitHub avant de créer la branche du TP2. Aucun résultat du TP2 n'est présenté comme acquis dans ce bilan.
+Le TP1 a été fusionné par l'enseignant et récupéré sur `main` avant la création de la branche du TP2. Le suivi ci-dessous distingue les étapes effectuées et celles restant à réaliser.
 
 ## TP1 — Travail réalisé
 
@@ -62,7 +62,7 @@ Les échecs observés et leur résolution sont détaillés dans [SYNTHESE_TP1.md
 
 ### Limites et transition vers le TP2
 
-Cinq fonctions restent au-dessus du seuil de complexité Ruff : `load`, `find`, `borrow_document`, `report` et `process`. Cette mesure Ruff n'est pas une mesure Radon : la mesure de départ Radon reste à effectuer au TP2.
+Cinq fonctions restent au-dessus du seuil de complexité Ruff : `load`, `find`, `borrow_document`, `report` et `process`. Cette mesure Ruff est distincte de la mesure Radon présentée ci-dessous.
 
 Le calcul des pénalités et les dictionnaires de règles ayant déjà été introduits au TP1, le TP2 partira de cet état réel. Il faudra notamment :
 
@@ -72,6 +72,28 @@ Le calcul des pénalités et les dictionnaires de règles ayant déjà été int
 4. Mesurer la complexité avant/après, puis documenter la revue croisée et les corrections.
 
 Cette liste décrit le travail prévu, pas le travail effectué. Les résultats et les éventuels bonus seront ajoutés à ce README au fur et à mesure du TP2.
+
+## TP2 — Suivi du refactoring
+
+### Étape 1 : préparation du dépôt — 22 octobre 2026
+
+- Fusion du TP1 par l'enseignant, récupérée sur `main` au commit `7481492`.
+- Création de la branche `tp2/refactoring` depuis cette version.
+- Récupération du README préparé avant le TP2 par cherry-pick (`c3c1cc5`), car cette mise à jour n'était pas incluse dans la fusion du TP1.
+- Ajout de `pythonpath = ["."]` dans la configuration pytest et de `radon>=6.0` dans les dépendances ; Radon 6.0.1 installé dans `.venv`.
+- Vérification de départ transmise : **21 tests réussis en 4,90 s**. Aucun refactoring du TP2 n'a encore été effectué.
+
+### Mesure Radon avant refactoring
+
+Commande exécutée : `radon cc -s -n C bibliotech.py`.
+
+| Fonction | Note initiale TP2 | Complexité initiale TP2 | Après refactoring |
+| --- | --- | --- | --- |
+| `Library.borrow_document` | C | 18 | À mesurer |
+| `process` | C | 16 | À mesurer |
+| `Library.report` | C | 14 | À mesurer |
+
+La commande affiche seulement les blocs de note C ou supérieure : aucune note D n'est signalée à ce départ. Les résultats diffèrent de l'exemple du guide, car le code a déjà été amélioré au TP1. L'objectif du niveau 2 reste d'obtenir une méthode `borrow` de note A. Les niveaux obligatoires et les nouveaux tests unitaires restent à réaliser.
 
 ## Installation
 
