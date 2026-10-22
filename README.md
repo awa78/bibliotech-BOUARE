@@ -97,6 +97,15 @@ Cette liste décrit le travail prévu, pas le travail effectué. Les résultats 
 - Résultat transmis : **37 tests réussis en 4,97 s**.
 - État : extraction vérifiée ; commit en attente. La section 3.3 continue ensuite avec les méthodes restantes et les clauses de garde.
 
+### Section 3.3 — Clauses de garde : remplacement incomplet détecté
+
+- Extraction de `is_borrowing` enregistrée dans le commit `18c5bd8`.
+- Ajout de `refusal_reason` et de `create_loan` pour séparer les refus et la création d'un emprunt.
+- Premier essai transmis après suppression de l'ancien bloc : **13 tests échoués et 24 réussis en 4,92 s**.
+- Diagnostic avec `git diff` : la méthode `borrow_document` a été supprimée, mais le nouveau bloc de clauses de garde n'a pas été ajouté dans le fichier enregistré. Les tests et `process` appellent donc une méthode absente.
+- Correction effectuée : insertion de `borrow_document(member_id, book_id)` avec sorties immédiates pour un membre inconnu, un document inconnu et un motif de refus ; délégation à `refusal_reason` et `create_loan`.
+- Nouvelle vérification transmise : **37 tests réussis en 4,59 s**. Les messages et les scénarios existants restent vérifiés. Section 3.3 prête à être commitée ; le renommage en `borrow` et la mise à jour des appels restent à faire en section 3.4.
+
 ### Étape 1 : préparation du dépôt — 22 octobre 2026
 
 - Fusion du TP1 par l'enseignant, récupérée sur `main` au commit `7481492`.
