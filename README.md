@@ -13,7 +13,7 @@ Le point de départ est une application fonctionnelle volontairement difficile �
 | TP1 : nettoyage et corrections de revue | Réalisés sur `tp1/nettoyage` |
 | Remise du TP1 | [Pull request nº 1](https://github.com/awa78/bibliotech-BOUARE/pull/1) |
 | Version initiale de comparaison | Étiquette Git `v0-initial` |
-| TP2 : refactoring et tests unitaires | Étape 1 : préparation et mesure initiale effectuées ; commit et publication en attente |
+| TP2 : refactoring et tests unitaires | Préparation publiée ; écriture des tests avant refactoring en cours |
 | Soutenance | À préparer après le TP2 |
 
 Le TP1 a été fusionné par l'enseignant et récupéré sur `main` avant la création de la branche du TP2. Le suivi ci-dessous distingue les étapes effectuées et celles restant à réaliser.
@@ -94,6 +94,18 @@ Commande exécutée : `radon cc -s -n C bibliotech.py`.
 | `Library.report` | C | 14 | À mesurer |
 
 La commande affiche seulement les blocs de note C ou supérieure : aucune note D n'est signalée à ce départ. Les résultats diffèrent de l'exemple du guide, car le code a déjà été amélioré au TP1. L'objectif du niveau 2 reste d'obtenir une méthode `borrow` de note A. Les niveaux obligatoires et les nouveaux tests unitaires restent à réaliser.
+
+### Tests avant refactoring — sections 2.1 et 3.1
+
+- Préparation enregistrée dans le commit `16847fe`, puis branche `tp2/refactoring` publiée, selon les sorties du terminal transmises.
+- Section 2.1 : création de `tests/test_rules.py` avec les cas de pénalité paramétrés. Le lancement ciblé produit l'ImportError attendue : `late_fee` n'existe pas encore sous ce nom. Ce rouge attendu n'est pas commité.
+- Vérification séparée de `tests/test_caracterisation.py` : **21 tests réussis en 4,99 s** ; aucune régression constatée dans ces scénarios.
+- Section 3.1 : création de `tests/conftest.py` avec la fixture du guide, qui copie les données et fixe la date au 21 octobre 2026.
+- Section 3.1 : `tests/test_borrow.py` contient les six cas demandés, avec le nom actuel `borrow_document` à la place de `do_stuff` : membre inactif, retard existant, document déjà emprunté, indisponibilité, limite atteinte et emprunt accepté avec identifiant L013 et échéance au 28 octobre 2026.
+- Vérification progressive : les tests d'emprunt passent de 1 à 6 cas réussis au fil de leur ajout. Vérification commune transmise : `tests/test_borrow.py` et `tests/test_caracterisation.py` donnent **27 tests réussis en 4,57 s**.
+- `tests/test_rules.py` reste temporairement exclu de cette vérification ciblée : son erreur d'import sur `late_fee` est toujours le rouge attendu de la section 2.1. Il ne doit pas être commité avant l'ajout de la fonction et le passage au vert.
+- État : section 3.1 vérifiée ; commit des tests d'emprunt en attente. Prochaine étape : section 2.2, écrire `late_fee` à côté du calcul existant sans encore modifier les quatre appels.
+- Les sections 2.2 et 2.3 restent à faire : aucune fonction du TP2 n'a encore été modifiée. Aucun bonus n'est entrepris.
 
 ## Installation
 
