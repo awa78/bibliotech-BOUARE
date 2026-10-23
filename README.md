@@ -255,6 +255,15 @@ Le contrôle initial ne signale aucune règle de sécurité ou de fiabilité par
 - Résultats transmis : **37 tests réussis en 5,32 s** ; Ruff avec la sélection du TP3 : **4 signalements C901**. Cette étape prépare la simplification complète de `process` ; elle ne suffit pas encore à supprimer son signalement.
 - État : deuxième extraction vérifiée ; commit à effectuer après relecture du diff.
 
+#### Troisième extraction : traitement de la commande borrow
+
+- L'extraction de l'affichage des membres a été enregistrée dans le commit `9985c59`.
+- Problème : `process` gérait directement la vérification des arguments d'emprunt et la traduction du résultat métier en code de retour.
+- Modification : extraction de `handle_borrow(library, args)` ; la commande `borrow` retourne désormais le résultat de cette fonction.
+- Justification : isoler le traitement d'une commande du routage général. Les messages et les codes sont conservés : 1 pour arguments manquants, 2 pour refus, 0 pour succès.
+- Résultats transmis : **37 tests réussis en 4,34 s** ; Ruff avec la sélection imposée : **4 signalements C901**. La simplification de `process` se poursuit ; les mesures finales seront relevées une fois les améliorations terminées.
+- État : extraction vérifiée ; commit à effectuer après relecture du diff.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.

@@ -444,6 +444,16 @@ def display_members(library):
             f"{status} | {library.count_active_loans(member['id'])} "
             "emprunt(s) en cours"
         )
+def handle_borrow(library, args):
+    if len(args) < 3:
+        print("Usage : borrow <id_membre> <id_document>")
+        return 1
+
+    accepted = library.borrow(args[1], args[2])
+    if not accepted:
+        return 2
+
+    return 0
 
 
 
@@ -462,12 +472,7 @@ def process(args):
     elif cmd == "members":
         display_members(lib)
     elif cmd == "borrow":
-        if len(args) < 3:
-            print("Usage : borrow <id_membre> <id_document>")
-            return 1
-        r = lib.borrow(args[1], args[2])
-        if not r:
-            return 2
+        return handle_borrow(lib, args)
     elif cmd == "return":
         if len(args) < 2:
             print("Usage : return <id_emprunt>")
