@@ -351,6 +351,13 @@ Le contrôle initial ne signale aucune règle de sécurité ou de fiabilité par
 - Vérification après cette extraction : **44 tests réussis en 5,75 s** ; aucune erreur Ruff avec la sélection TP3.
 - Radon : **`load` A (5)**, contre B (7) après la première extraction ; **`load_members` A (3)**. Il reste à extraire le chargement des emprunts.
 
+- Deuxième extraction enregistrée dans le commit `2e1c026`.
+- Troisième extraction : `load_loans` prend en charge la lecture des emprunts et la conversion des pénalités. La valeur de repli `0` en cas de pénalité absente ou non numérique est conservée.
+- `load` orchestre désormais les trois chargements dans leur ordre initial et conserve l'affichage de débogage après leur exécution.
+- Vérification : **44 tests réussis en 4,75 s**. Un avertissement W293 a été corrigé par la suppression d'espaces sur une ligne vide ; le contrôle Ruff TP3 suivant ne signale aucune erreur.
+- Radon : **`load` A (2)**, contre **B (9)** au début du TP3 ; `load_books` et `load_members` sont A (3), `load_loans` A (4).
+- État : priorité 4 vérifiée. La priorité 5 reste à traiter : vérifier les références à `old_calc_fee` avant de supprimer cette fonction inutilisée.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.

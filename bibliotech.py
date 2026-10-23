@@ -75,11 +75,8 @@ class Library:
             self.m.append(
                 {"id": x[0], "name": x[1], "email": x[2], "type": x[3], "active": a}
             )
-
-    def load(self):
-        """Charger les trois CSV sans exécuter leur contenu."""
-        self.load_books()
-        self.load_members()
+    def load_loans(self):
+        """Charger les emprunts et convertir les pénalités."""
         with open(DATA + "/loans.csv") as f:
             lines = f.readlines()
         for line in lines[1:]:
@@ -89,6 +86,7 @@ class Library:
             try:
                 fee = float(x[6])
             except (ValueError, IndexError):
+                # Conserver la valeur par défaut du chargement initial.
                 fee = 0
             self.l.append(
                 {
@@ -101,8 +99,15 @@ class Library:
                     "fee": fee,
                 }
             )
+
+    def load(self):
+        """Charger successivement les trois fichiers CSV."""
+        self.load_books()
+        self.load_members()
+        self.load_loans()
         if debug:
             print("chargement ok", len(self.b), len(self.m), len(self.l))
+
 
     def save(self):
         with open(DATA + "/loans.csv", "w") as f:
