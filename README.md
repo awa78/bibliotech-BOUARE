@@ -190,6 +190,52 @@ La commande affiche seulement les blocs de note C ou supérieure : aucune note D
 - État : niveau 1 vérifié ; dernier commit de l'extraction en attente. Les cinq commits attendus correspondent à l'ajout de la fonction avec ses tests, puis aux quatre remplacements progressifs.
 - Prochaine étape : niveau 2, section 3.2. Les tests de la section 3.1 sont déjà enregistrés ; vérifier les dictionnaires métier existants avant les clauses de garde de la section 3.3.
 
+## TP3 — Audit initial et priorités
+
+### Préparation et référence de comparaison
+
+- TP1 et TP2 fusionnés par l'enseignant ; `main` récupéré au commit `1ad84e7` et vérifié propre.
+- Vérification sur `main` : **37 tests réussis en 4,83 s**.
+- Étiquette **`v2-fin-j2`** créée et publiée ; elle reste fixe comme référence « avant ».
+- Branche **`qualite`** créée depuis cet état et publiée. Aucune correction du programme effectuée avant les mesures initiales.
+
+### Mesures avant/après
+
+| Indicateur | Avant (`v2-fin-j2`) | Après (`qualite`, à mesurer après corrections) |
+| --- | --- | --- |
+| Avertissements Ruff, sélection imposée | 4, tous C901 | À mesurer |
+| Complexité moyenne Radon | B (5,181818181818182), sur 22 blocs | À mesurer |
+| Pire fonction : nom, note et complexité | `process`, C (16) | À mesurer |
+| Fonctions notées C ou pire | 2 : `process` C (16), `Library.report` C (14) | À mesurer |
+| Nombre de tests, tous verts | 37 | À mesurer |
+
+Les deux dernières exécutions transmises donnent **37 tests réussis en 4,62 s**, puis **4,23 s**. Le nombre et le résultat des tests sont les indicateurs retenus, pas leur durée variable.
+
+Commandes identiques à utiliser pour les mesures avant et après :
+
+```powershell
+ruff check . --select E,W,F,B,S,C90,SIM --extend-exclude tests --statistics
+radon cc -s -a --exclude "tests/*" .
+radon cc -s -n C --exclude "tests/*" .
+python -m pytest -q -p no:cacheprovider --basetemp "$env:TEMP\bibliotech-tests-awa"
+```
+
+Les options pytest contournent le problème d'accès au cache et au dossier temporaire rencontré sur ce poste ; elles seront conservées pour la mesure finale. Le dossier indiqué est réservé aux tests. La sélection Ruff du TP3 diffère des contrôles des TP précédents : leurs totaux ne doivent pas être comparés directement.
+
+### Défauts réellement présents et améliorations retenues
+
+Le contrôle initial ne signale aucune règle de sécurité ou de fiabilité parmi les familles S et B, ni E722. Les corrections `eval`, exceptions nues et argument mutable déjà traitées ne sont donc pas revendiquées de nouveau au TP3. La priorité suivante du guide est la complexité, puis la duplication et la lisibilité.
+
+| Priorité | Défaut | Où et comment repéré | Catégorie | Amélioration prévue et justification |
+| --- | --- | --- | --- | --- |
+| 1 | Routage des commandes, vérification des arguments et affichage mélangés | `process` : Radon C (16), Ruff C901, lecture du code | Complexité | Extraire les traitements des commandes pour réduire la fonction la plus complexe, en conservant les sorties et les codes de retour |
+| 2 | Calcul des statistiques et affichages mêlés | `Library.report` : Radon C (14), Ruff C901, lecture du code | Complexité | Séparer les calculs du rapport de leur présentation, en gardant les mêmes montants, compteurs et classements |
+| 3 | Trois boucles de recherche presque identiques | `Library.find` : Radon B (10), Ruff C901, lecture du code | Duplication et complexité | Mutualiser la recherche par identifiant tout en préservant les résultats et les cas inconnus |
+| 4 | Une méthode charge et transforme trois fichiers | `Library.load` : Radon B (9), Ruff C901, lecture du code | Responsabilités et complexité | Extraire les chargements par fichier pour rendre chaque traitement plus court et distinct |
+| 5 | Ancienne fonction avec des tarifs différents, marquée « ne plus utiliser » | `old_calc_fee`, lecture du code et recherche des références | Lisibilité et code inutilisé | Retirer le calcul obsolète après vérification de l'absence d'appels pour éviter de le confondre avec `late_fee` |
+
+**État de l'audit :** mesures initiales relevées et cinq améliorations sélectionnées. Les corrections, leurs tests et leurs commits restent à réaliser, une amélioration à la fois. Aucune activité facultative n'a été commencée. Le README sera ensuite organisé selon les six parties exactes demandées par le guide, en conservant le suivi du travail.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.
