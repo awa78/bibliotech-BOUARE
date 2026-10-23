@@ -326,6 +326,17 @@ Le contrôle initial ne signale aucune règle de sécurité ou de fiabilité par
 - Radon intermédiaire transmis : **`report` B (7)**, contre **C (14)** au départ. Les calculs extraits sont en A : `count_loans_by_kind` (2), `rank_books_by_loans` (2) et `loan_statistics` (4). `process` reste A (4).
 - État : priorité 2 vérifiée ; commit à effectuer après relecture du diff. Les mesures « après » globales seront faites à l'étape finale ; la prochaine priorité est la recherche par identifiant dans `find`.
 
+### Suivi des améliorations — priorité 3 : mutualiser find
+
+- La séparation des statistiques de `report` a été enregistrée dans le commit `085df42`.
+- Problème : `find` répétait trois fois la même boucle de recherche par identifiant, selon le type de collection.
+- Tests ajoutés avant refactoring dans `tests/test_find.py` : trois cas vérifient l'objet retrouvé dans les livres, membres et emprunts ; quatre vérifient les identifiants absents et un type inconnu. Première exécution : **44 tests réussis en 6,54 s**, avant changement de `find`.
+- Modification : dictionnaire des collections et boucle unique ; un type inconnu sélectionne une liste vide et retourne `None`.
+- Justification : supprimer la duplication tout en conservant la recherche du premier objet correspondant et les résultats des cas inconnus testés.
+- Vérification après refactoring : **44 tests réussis en 5,34 s**, dont les 37 tests précédents et les 7 nouveaux cas de recherche. Aucun test de caractérisation ni fichier golden modifié.
+- Ruff avec la sélection TP3 : **1 C901** restant dans `load`, contre 2 avant cette correction. Radon : **`find` A (3)**, contre **B (10)** au départ. `process` reste A (4) et `report` B (7).
+- État : priorité 3 vérifiée ; commit à effectuer après relecture du diff. Prochaine priorité : séparer les chargements de `load`. Le tableau final indiquera l'augmentation des tests de 37 à 44 à ce stade.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.

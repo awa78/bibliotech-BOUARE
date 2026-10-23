@@ -117,20 +117,14 @@ class Library:
 
     # t = "b" pour livre, "m" pour membre, "l" pour emprunt
     def find(self, t, id):
-        if t == "b":
-            for x in self.b:
-                if x["id"] == id:
-                    return x
-        elif t == "m":
-            for x in self.m:
-                if x["id"] == id:
-                    return x
-        elif t == "l":
-            for x in self.l:
-                if x["id"] == id:
-                    return x
-        return None
+        collections = {"b": self.b, "m": self.m, "l": self.l}
+        items = collections.get(t, [])
 
+        for item in items:
+            if item["id"] == id:
+                return item
+
+        return None
     def count_active_loans(self, mid):
         n = 0
         for x in self.l:
