@@ -315,6 +315,17 @@ Le contrôle initial ne signale aucune règle de sécurité ou de fiabilité par
 - Une ligne vide contenant des espaces (W293) a été corrigée avec la commande ciblée. Le dernier relevé Ruff transmis ne signale plus que **3 C901**.
 - État : deuxième extraction de la priorité 2 vérifiée ; commit à effectuer après relecture du diff. La restructuration de `report` reste en cours.
 
+#### Troisième extraction : statistiques d'emprunts et fin de la priorité 2
+
+- Le classement des documents a été extrait dans le commit `08d7887`.
+- Problème : `report` mêlait encore les calculs des emprunts en cours, des retards, des pénalités encaissées et en attente, et des compteurs par document à leur affichage.
+- Modification : extraction de `loan_statistics()`, sans affichage, puis récupération des cinq résultats dans `report`. Suppression de l'initialisation `data2 = {}` devenue inutile. Les montants en attente utilisent toujours `late_fee`.
+- Justification : séparer le calcul des statistiques de la présentation, en conservant les compteurs, les montants et les sorties des scénarios existants.
+- Vérification transmise après suppression de la ligne inutile : **37 tests réussis en 4,50 s**.
+- Une ligne vide contenant des espaces (W293) a ensuite été corrigée avec la commande ciblée. Dernier contrôle Ruff transmis : **2 C901**, contre 3 avant cette extraction et 4 au départ du TP3 ; seules `find` et `load` dépassent encore le seuil.
+- Radon intermédiaire transmis : **`report` B (7)**, contre **C (14)** au départ. Les calculs extraits sont en A : `count_loans_by_kind` (2), `rank_books_by_loans` (2) et `loan_statistics` (4). `process` reste A (4).
+- État : priorité 2 vérifiée ; commit à effectuer après relecture du diff. Les mesures « après » globales seront faites à l'étape finale ; la prochaine priorité est la recherche par identifiant dans `find`.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.

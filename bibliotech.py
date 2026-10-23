@@ -297,10 +297,38 @@ class Library:
             ranking.append((-count, book["title"]))
         return sorted(ranking)
 
+    def loan_statistics(self):
+        active = 0
+        overdue = 0
+        collected = 0
+        pending = 0
+        loan_counts = {}
+
+        for loan in self.l:
+            if loan["returned"] == "":
+                active += 1
+                due = datetime.strptime(loan["due"], "%Y-%m-%d").date()
+                if due < get_today():
+                    overdue += 1
+                    book = self.find("b", loan["book"])
+                    member = self.find("m", loan["member"])
+                    days_late = (get_today() - due).days
+                    pending += late_fee(
+                        days_late, book["kind"], member["type"], book["price"]
+                    )
+            else:
+                collected += loan["fee"]
+
+            book_id = loan["book"]
+            loan_counts[book_id] = loan_counts.get(book_id, 0) + 1
+
+        return active, overdue, collected, pending, loan_counts
+
+
 
 
     def report(self):
-        data2 = {}
+
         print("=== RAPPORT BIBLIOTECH ===")
         print("Date : " + str(get_today()))
         c = 0
@@ -312,27 +340,7 @@ class Library:
             if x["active"]:
                 a = a + 1
         print("Membres : " + str(len(self.m)) + " dont " + str(a) + " actifs")
-        en_cours = 0
-        en_retard = 0
-        encaisse = 0
-        a_payer = 0
-        for x in self.l:
-            if x["returned"] == "":
-                en_cours = en_cours + 1
-                due = datetime.strptime(x["due"], "%Y-%m-%d").date()
-                if due < get_today():
-                    en_retard = en_retard + 1
-                    bk = self.find("b", x["book"])
-                    mb = self.find("m", x["member"])
-                    j = (get_today() - due).days
-                    pen = late_fee(j, bk["kind"], mb["type"], bk["price"])
-                    a_payer = a_payer + pen
-            else:
-                encaisse = encaisse + x["fee"]
-            if x["book"] in data2:
-                data2[x["book"]] = data2[x["book"]] + 1
-            else:
-                data2[x["book"]] = 1
+        en_cours, en_retard, encaisse, a_payer, data2 = self.loan_statistics()
         print(
             f"Emprunts : {len(self.l)} au total, {en_cours} en cours, "
             f"{en_retard} en retard"
