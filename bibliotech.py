@@ -43,8 +43,8 @@ class Library:
         self.load()
 
     # chargement des donnees
-    def load(self):
-        """Charger les trois CSV sans exécuter leur contenu."""
+    def load_books(self):
+        """Charger les livres et convertir leurs valeurs numériques."""
         with open(DATA + "/books.csv") as f:
             lines = f.readlines()
         for line in lines[1:]:
@@ -57,11 +57,14 @@ class Library:
                     "title": x[1],
                     "author": x[2],
                     "kind": x[3],
-                    # Un prix doit être numérique : ne jamais utiliser eval ici.
+                    # Convertir le prix sans exécuter le contenu du CSV.
                     "price": float(x[4]),
                     "copies": int(x[5]),
                 }
             )
+
+    def load_members(self):
+        """Charger les membres et déterminer leur statut actif."""
         with open(DATA + "/members.csv") as f:
             lines = f.readlines()
         for line in lines[1:]:
@@ -72,6 +75,8 @@ class Library:
             self.m.append(
                 {"id": x[0], "name": x[1], "email": x[2], "type": x[3], "active": a}
             )
+    def load_loans(self):
+        """Charger les emprunts et convertir les pénalités."""
         with open(DATA + "/loans.csv") as f:
             lines = f.readlines()
         for line in lines[1:]:
@@ -81,6 +86,7 @@ class Library:
             try:
                 fee = float(x[6])
             except (ValueError, IndexError):
+                # Conserver la valeur par défaut du chargement initial.
                 fee = 0
             self.l.append(
                 {
@@ -93,8 +99,15 @@ class Library:
                     "fee": fee,
                 }
             )
+
+    def load(self):
+        """Charger successivement les trois fichiers CSV."""
+        self.load_books()
+        self.load_members()
+        self.load_loans()
         if debug:
             print("chargement ok", len(self.b), len(self.m), len(self.l))
+
 
     def save(self):
         with open(DATA + "/loans.csv", "w") as f:
@@ -117,20 +130,14 @@ class Library:
 
     # t = "b" pour livre, "m" pour membre, "l" pour emprunt
     def find(self, t, id):
-        if t == "b":
-            for x in self.b:
-                if x["id"] == id:
-                    return x
-        elif t == "m":
-            for x in self.m:
-                if x["id"] == id:
-                    return x
-        elif t == "l":
-            for x in self.l:
-                if x["id"] == id:
-                    return x
-        return None
+        collections = {"b": self.b, "m": self.m, "l": self.l}
+        items = collections.get(t, [])
 
+        for item in items:
+            if item["id"] == id:
+                return item
+
+        return None
     def count_active_loans(self, mid):
         n = 0
         for x in self.l:
@@ -282,8 +289,53 @@ class Library:
             )
         print("Total des penalites en cours : " + "%.2f" % total + " EUR")
 
+    def count_loans_by_kind(self):
+        counts = {}
+        for loan in self.l:
+            book = self.find("b", loan["book"])
+            kind = book["kind"]
+            counts[kind] = counts.get(kind, 0) + 1
+        return counts
+
+    def rank_books_by_loans(self, loan_counts):
+        ranking = []
+        for book_id, count in loan_counts.items():
+            book = self.find("b", book_id)
+            ranking.append((-count, book["title"]))
+        return sorted(ranking)
+
+    def loan_statistics(self):
+        active = 0
+        overdue = 0
+        collected = 0
+        pending = 0
+        loan_counts = {}
+
+        for loan in self.l:
+            if loan["returned"] == "":
+                active += 1
+                due = datetime.strptime(loan["due"], "%Y-%m-%d").date()
+                if due < get_today():
+                    overdue += 1
+                    book = self.find("b", loan["book"])
+                    member = self.find("m", loan["member"])
+                    days_late = (get_today() - due).days
+                    pending += late_fee(
+                        days_late, book["kind"], member["type"], book["price"]
+                    )
+            else:
+                collected += loan["fee"]
+
+            book_id = loan["book"]
+            loan_counts[book_id] = loan_counts.get(book_id, 0) + 1
+
+        return active, overdue, collected, pending, loan_counts
+
+
+
+
     def report(self):
-        data2 = {}
+
         print("=== RAPPORT BIBLIOTECH ===")
         print("Date : " + str(get_today()))
         c = 0
@@ -295,27 +347,7 @@ class Library:
             if x["active"]:
                 a = a + 1
         print("Membres : " + str(len(self.m)) + " dont " + str(a) + " actifs")
-        en_cours = 0
-        en_retard = 0
-        encaisse = 0
-        a_payer = 0
-        for x in self.l:
-            if x["returned"] == "":
-                en_cours = en_cours + 1
-                due = datetime.strptime(x["due"], "%Y-%m-%d").date()
-                if due < get_today():
-                    en_retard = en_retard + 1
-                    bk = self.find("b", x["book"])
-                    mb = self.find("m", x["member"])
-                    j = (get_today() - due).days
-                    pen = late_fee(j, bk["kind"], mb["type"], bk["price"])
-                    a_payer = a_payer + pen
-            else:
-                encaisse = encaisse + x["fee"]
-            if x["book"] in data2:
-                data2[x["book"]] = data2[x["book"]] + 1
-            else:
-                data2[x["book"]] = 1
+        en_cours, en_retard, encaisse, a_payer, data2 = self.loan_statistics()
         print(
             f"Emprunts : {len(self.l)} au total, {en_cours} en cours, "
             f"{en_retard} en retard"
@@ -323,20 +355,11 @@ class Library:
         print("Penalites encaissees : " + "%.2f" % encaisse + " EUR")
         print("Penalites en attente : " + "%.2f" % a_payer + " EUR")
         # par type
-        k = {}
-        for x in self.l:
-            bk = self.find("b", x["book"])
-            if bk["kind"] in k:
-                k[bk["kind"]] += 1
-            else:
-                k[bk["kind"]] = 1
+        k = self.count_loans_by_kind()
         for kk in sorted(k.keys()):
             print("  - " + kk + " : " + str(k[kk]) + " emprunt(s)")
         # top 3
-        lst = []
-        for key in data2:
-            lst.append((-data2[key], self.find("b", key)["title"]))
-        lst.sort()
+        lst = self.rank_books_by_loans(data2)
         print("Top 3 :")
         i = 0
         for x in lst:
@@ -422,11 +445,51 @@ def get_today():
     return TODAY
 
 
-# ancienne version du calcul, ne plus utiliser
-def old_calc_fee(days, kind):
-    if kind == "book":
-        return days * 0.3
-    return days * 0.8
+
+
+def display_catalog(library):
+    for book in library.b:
+        available = library.dispo(book["id"])
+        print(
+            f"{book['id']} | {book['title']} | {book['author']} | "
+            f"{book['kind']} | {available}/{book['copies']} disponible(s)"
+        )
+
+def display_members(library):
+    for member in library.m:
+        status = "actif" if member["active"] else "inactif"
+        print(
+            f"{member['id']} | {member['name']} | {member['type']} | "
+            f"{status} | {library.count_active_loans(member['id'])} "
+            "emprunt(s) en cours"
+        )
+def handle_borrow(library, args):
+    if len(args) < 3:
+        print("Usage : borrow <id_membre> <id_document>")
+        return 1
+
+    accepted = library.borrow(args[1], args[2])
+    if not accepted:
+        return 2
+
+    return 0
+
+def handle_return(library, args):
+    if len(args) < 2:
+        print("Usage : return <id_emprunt>")
+        return 1
+
+    library.ret(args[1])
+    return 0
+
+def handle_export(library, args):
+    if len(args) < 2:
+        print("Usage : export <fichier.csv>")
+        return 1
+
+    library.export(args[1], ";")
+    return 0
+
 
 
 def process(args):
@@ -439,45 +502,23 @@ def process(args):
         print("Commandes : list, members, borrow, return, overdue, report, export")
         return 1
     cmd = args[0]
-    if cmd == "list":
-        for x in lib.b:
-            n = lib.dispo(x["id"])
-            print(
-                f"{x['id']} | {x['title']} | {x['author']} | {x['kind']} | "
-                f"{n}/{x['copies']} disponible(s)"
-            )
-    elif cmd == "members":
-        for x in lib.m:
-            s = "actif" if x["active"] else "inactif"
-            print(
-                f"{x['id']} | {x['name']} | {x['type']} | {s} | "
-                f"{lib.count_active_loans(x['id'])} emprunt(s) en cours"
-            )
-    elif cmd == "borrow":
-        if len(args) < 3:
-            print("Usage : borrow <id_membre> <id_document>")
-            return 1
-        r = lib.borrow(args[1], args[2])
-        if not r:
-            return 2
-    elif cmd == "return":
-        if len(args) < 2:
-            print("Usage : return <id_emprunt>")
-            return 1
-        lib.ret(args[1])
-    elif cmd == "overdue":
-        lib.overdue()
-    elif cmd == "report":
-        lib.report()
-    elif cmd == "export":
-        if len(args) < 2:
-            print("Usage : export <fichier.csv>")
-            return 1
-        lib.export(args[1], ";")
-    else:
+    commands = {
+        "list": lambda: display_catalog(lib),
+        "members": lambda: display_members(lib),
+        "borrow": lambda: handle_borrow(lib, args),
+        "return": lambda: handle_return(lib, args),
+        "overdue": lib.overdue,
+        "report": lib.report,
+        "export": lambda: handle_export(lib, args),
+    }
+
+    action = commands.get(cmd)
+    if action is None:
         print("Commande inconnue : " + cmd)
         return 1
-    return 0
+
+    result = action()
+    return 0 if result is None else result
 
 
 if __name__ == "__main__":
