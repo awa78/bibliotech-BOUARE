@@ -63,9 +63,8 @@ class Library:
                 }
             )
 
-    def load(self):
-        """Charger les trois CSV sans exécuter leur contenu."""
-        self.load_books()
+    def load_members(self):
+        """Charger les membres et déterminer leur statut actif."""
         with open(DATA + "/members.csv") as f:
             lines = f.readlines()
         for line in lines[1:]:
@@ -76,6 +75,11 @@ class Library:
             self.m.append(
                 {"id": x[0], "name": x[1], "email": x[2], "type": x[3], "active": a}
             )
+
+    def load(self):
+        """Charger les trois CSV sans exécuter leur contenu."""
+        self.load_books()
+        self.load_members()
         with open(DATA + "/loans.csv") as f:
             lines = f.readlines()
         for line in lines[1:]:

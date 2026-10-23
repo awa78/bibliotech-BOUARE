@@ -346,6 +346,11 @@ Le contrôle initial ne signale aucune règle de sécurité ou de fiabilité par
 - Radon : **`load` B (7)**, contre **B (9)** avant extraction ; **`load_books` A (3)**. `report` reste B (7) et `process` A (4).
 - État : première extraction vérifiée ; les chargements des membres et des emprunts restent à séparer. Le bilan global sera établi après les autres améliorations prévues.
 
+- Première extraction enregistrée dans le commit `95ba931`.
+- Deuxième extraction : `load_members` prend en charge la lecture des membres et la conversion du statut actif ; `load` l'appelle après `load_books`. Le traitement des lignes et les valeurs chargées sont conservés.
+- Vérification après cette extraction : **44 tests réussis en 5,75 s** ; aucune erreur Ruff avec la sélection TP3.
+- Radon : **`load` A (5)**, contre B (7) après la première extraction ; **`load_members` A (3)**. Il reste à extraire le chargement des emprunts.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.
