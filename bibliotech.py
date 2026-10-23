@@ -463,6 +463,14 @@ def handle_return(library, args):
     library.ret(args[1])
     return 0
 
+def handle_export(library, args):
+    if len(args) < 2:
+        print("Usage : export <fichier.csv>")
+        return 1
+
+    library.export(args[1], ";")
+    return 0
+
 
 
 def process(args):
@@ -488,10 +496,7 @@ def process(args):
     elif cmd == "report":
         lib.report()
     elif cmd == "export":
-        if len(args) < 2:
-            print("Usage : export <fichier.csv>")
-            return 1
-        lib.export(args[1], ";")
+        return handle_export(lib, args)
     else:
         print("Commande inconnue : " + cmd)
         return 1

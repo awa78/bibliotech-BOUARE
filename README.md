@@ -273,6 +273,15 @@ Le contrôle initial ne signale aucune règle de sécurité ou de fiabilité par
 - Résultats transmis : **37 tests réussis en 4,47 s** ; Ruff avec la sélection du TP3 : **4 signalements C901**. La priorité 1 se poursuit avant les mesures finales.
 - État : extraction vérifiée ; commit à effectuer après relecture du diff.
 
+#### Cinquième extraction : traitement de la commande export
+
+- Le traitement de `return` a été extrait dans le commit `1f77715`.
+- Problème : `process` vérifiait l'argument du fichier d'export et choisissait directement le séparateur.
+- Modification : extraction de `handle_export(library, args)` ; la commande `export` retourne désormais le résultat de cette fonction.
+- Justification : isoler la commande du routage et conserver son contrat : message d'usage et code 1 si le fichier manque, séparateur `;` et code 0 après export.
+- Résultats transmis : **37 tests réussis en 4,38 s** ; Ruff avec la sélection du TP3 : **4 signalements C901**. L'extraction des traitements prépare la simplification du routage restant de `process`.
+- État : extraction vérifiée ; commit à effectuer après relecture du diff.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.
