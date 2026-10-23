@@ -428,6 +428,15 @@ def old_calc_fee(days, kind):
         return days * 0.3
     return days * 0.8
 
+def display_catalog(library):
+    for book in library.b:
+        available = library.dispo(book["id"])
+        print(
+            f"{book['id']} | {book['title']} | {book['author']} | "
+            f"{book['kind']} | {available}/{book['copies']} disponible(s)"
+        )
+
+
 
 def process(args):
     global TODAY
@@ -440,12 +449,7 @@ def process(args):
         return 1
     cmd = args[0]
     if cmd == "list":
-        for x in lib.b:
-            n = lib.dispo(x["id"])
-            print(
-                f"{x['id']} | {x['title']} | {x['author']} | {x['kind']} | "
-                f"{n}/{x['copies']} disponible(s)"
-            )
+        display_catalog(lib)
     elif cmd == "members":
         for x in lib.m:
             s = "actif" if x["active"] else "inactif"

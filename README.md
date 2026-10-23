@@ -236,6 +236,16 @@ Le contrôle initial ne signale aucune règle de sécurité ou de fiabilité par
 
 **État de l'audit :** mesures initiales relevées et cinq améliorations sélectionnées. Les corrections, leurs tests et leurs commits restent à réaliser, une amélioration à la fois. Aucune activité facultative n'a été commencée. Le README sera ensuite organisé selon les six parties exactes demandées par le guide, en conservant le suivi du travail.
 
+### Suivi des améliorations — priorité 1 : simplifier process
+
+#### Première extraction : affichage du catalogue
+
+- Problème : `process` assurait lui-même la boucle et la présentation de chaque document, en plus du routage des commandes.
+- Modification : extraction de `display_catalog(library)` et remplacement du bloc de la commande `list` par `display_catalog(lib)` ; noms locaux `book` et `available` plus explicites.
+- Justification : séparer la responsabilité d'affichage du catalogue du choix de la commande, sans changer le texte produit.
+- Résultats transmis après modification : **37 tests réussis en 4,21 s** ; Ruff avec la sélection du TP3 : **4 signalements C901**. Le seuil Ruff reste dépassé ; la priorité 1 se poursuit par petits pas. Le tableau « après » ne sera rempli qu'une fois les améliorations terminées.
+- État : étape vérifiée ; commit à effectuer après relecture du diff.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.
