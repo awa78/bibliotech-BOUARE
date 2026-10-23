@@ -445,11 +445,7 @@ def get_today():
     return TODAY
 
 
-# ancienne version du calcul, ne plus utiliser
-def old_calc_fee(days, kind):
-    if kind == "book":
-        return days * 0.3
-    return days * 0.8
+
 
 def display_catalog(library):
     for book in library.b:
