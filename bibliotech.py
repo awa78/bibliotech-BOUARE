@@ -455,6 +455,14 @@ def handle_borrow(library, args):
 
     return 0
 
+def handle_return(library, args):
+    if len(args) < 2:
+        print("Usage : return <id_emprunt>")
+        return 1
+
+    library.ret(args[1])
+    return 0
+
 
 
 def process(args):
@@ -474,10 +482,7 @@ def process(args):
     elif cmd == "borrow":
         return handle_borrow(lib, args)
     elif cmd == "return":
-        if len(args) < 2:
-            print("Usage : return <id_emprunt>")
-            return 1
-        lib.ret(args[1])
+        return handle_return(lib, args)
     elif cmd == "overdue":
         lib.overdue()
     elif cmd == "report":

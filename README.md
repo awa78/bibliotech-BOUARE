@@ -264,6 +264,15 @@ Le contrôle initial ne signale aucune règle de sécurité ou de fiabilité par
 - Résultats transmis : **37 tests réussis en 4,34 s** ; Ruff avec la sélection imposée : **4 signalements C901**. La simplification de `process` se poursuit ; les mesures finales seront relevées une fois les améliorations terminées.
 - État : extraction vérifiée ; commit à effectuer après relecture du diff.
 
+#### Quatrième extraction : traitement de la commande return
+
+- Le traitement de `borrow` a été extrait dans le commit `3d1bdac`.
+- Problème : `process` vérifiait directement l'argument de la commande `return` avant d'appeler la méthode métier.
+- Modification : ajout de `handle_return(library, args)` et remplacement du bloc par `return handle_return(lib, args)`.
+- Justification : séparer le traitement de la commande du routage, sans changer le comportement existant : code 1 si l'argument manque, sinon appel à `ret` et code 0, y compris pour les erreurs métier déjà gérées par `ret`.
+- Résultats transmis : **37 tests réussis en 4,47 s** ; Ruff avec la sélection du TP3 : **4 signalements C901**. La priorité 1 se poursuit avant les mesures finales.
+- État : extraction vérifiée ; commit à effectuer après relecture du diff.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.
