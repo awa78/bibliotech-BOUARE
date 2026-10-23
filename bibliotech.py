@@ -290,6 +290,14 @@ class Library:
             counts[kind] = counts.get(kind, 0) + 1
         return counts
 
+    def rank_books_by_loans(self, loan_counts):
+        ranking = []
+        for book_id, count in loan_counts.items():
+            book = self.find("b", book_id)
+            ranking.append((-count, book["title"]))
+        return sorted(ranking)
+
+
 
     def report(self):
         data2 = {}
@@ -336,10 +344,7 @@ class Library:
         for kk in sorted(k.keys()):
             print("  - " + kk + " : " + str(k[kk]) + " emprunt(s)")
         # top 3
-        lst = []
-        for key in data2:
-            lst.append((-data2[key], self.find("b", key)["title"]))
-        lst.sort()
+        lst = self.rank_books_by_loans(data2)
         print("Top 3 :")
         i = 0
         for x in lst:

@@ -305,6 +305,16 @@ Le contrôle initial ne signale aucune règle de sécurité ou de fiabilité par
 - Ruff a d'abord signalé une ligne vide contenant des espaces (W293), corrigée par `ruff check bibliotech.py --select W293 --fix`. Le contrôle final avec la sélection du TP3 donne **3 C901**, sans signalement de style supplémentaire.
 - État : première extraction de la priorité 2 vérifiée ; commit à effectuer après relecture du diff. La restructuration de `report` se poursuit ensuite.
 
+#### Deuxième extraction : classement des documents par emprunts
+
+- Le comptage des emprunts par type a été extrait dans le commit `0749bfd`.
+- Problème : `report` construisait et triait directement la liste du classement, en plus de l'afficher.
+- Modification : extraction de `rank_books_by_loans(loan_counts)` ; le rapport appelle `self.rank_books_by_loans(data2)` avant son affichage existant.
+- Justification : séparer le calcul du classement de sa présentation. Le tri conserve les couples `(-nombre_emprunts, titre)` : nombre décroissant, puis titre alphabétique en cas d'égalité.
+- Résultat transmis après extraction : **37 tests réussis en 4,75 s**.
+- Une ligne vide contenant des espaces (W293) a été corrigée avec la commande ciblée. Le dernier relevé Ruff transmis ne signale plus que **3 C901**.
+- État : deuxième extraction de la priorité 2 vérifiée ; commit à effectuer après relecture du diff. La restructuration de `report` reste en cours.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.
