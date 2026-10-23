@@ -293,6 +293,18 @@ Le contrôle initial ne signale aucune règle de sécurité ou de fiabilité par
 - Mesure intermédiaire Radon : **`process` A (4)**, contre **C (16)** au départ. Les fonctions extraites sont en A : `display_catalog` (2), `display_members` (3), `handle_borrow` (3), `handle_return` (2) et `handle_export` (2).
 - État : priorité 1 vérifiée ; commit du routage à effectuer. Les mesures « après » globales restent réservées à l'étape finale. La prochaine priorité est `Library.report`, toujours C (14).
 
+### Suivi des améliorations — priorité 2 : restructurer report
+
+#### Première extraction : comptage des emprunts par type
+
+- Le routage simplifié de `process` a été enregistré dans le commit `0983b9b`.
+- Problème : `report` calculait directement les compteurs par type de document avant de les afficher.
+- Modification : extraction de `count_loans_by_kind()`, qui retourne un dictionnaire sans affichage ; utilisation de `counts.get(kind, 0) + 1` pour incrémenter chaque type. `report` conserve le tri des types et le texte de sortie.
+- Justification : séparer ce calcul de sa présentation et réduire les décisions de la méthode de rapport.
+- Résultat transmis après extraction : **37 tests réussis en 4,45 s**.
+- Ruff a d'abord signalé une ligne vide contenant des espaces (W293), corrigée par `ruff check bibliotech.py --select W293 --fix`. Le contrôle final avec la sélection du TP3 donne **3 C901**, sans signalement de style supplémentaire.
+- État : première extraction de la priorité 2 vérifiée ; commit à effectuer après relecture du diff. La restructuration de `report` se poursuit ensuite.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.

@@ -282,6 +282,15 @@ class Library:
             )
         print("Total des penalites en cours : " + "%.2f" % total + " EUR")
 
+    def count_loans_by_kind(self):
+        counts = {}
+        for loan in self.l:
+            book = self.find("b", loan["book"])
+            kind = book["kind"]
+            counts[kind] = counts.get(kind, 0) + 1
+        return counts
+
+
     def report(self):
         data2 = {}
         print("=== RAPPORT BIBLIOTECH ===")
@@ -323,13 +332,7 @@ class Library:
         print("Penalites encaissees : " + "%.2f" % encaisse + " EUR")
         print("Penalites en attente : " + "%.2f" % a_payer + " EUR")
         # par type
-        k = {}
-        for x in self.l:
-            bk = self.find("b", x["book"])
-            if bk["kind"] in k:
-                k[bk["kind"]] += 1
-            else:
-                k[bk["kind"]] = 1
+        k = self.count_loans_by_kind()
         for kk in sorted(k.keys()):
             print("  - " + kk + " : " + str(k[kk]) + " emprunt(s)")
         # top 3
