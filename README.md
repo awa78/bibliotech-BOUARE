@@ -358,6 +358,14 @@ Le contrôle initial ne signale aucune règle de sécurité ou de fiabilité par
 - Radon : **`load` A (2)**, contre **B (9)** au début du TP3 ; `load_books` et `load_members` sont A (3), `load_loans` A (4).
 - État : priorité 4 vérifiée. La priorité 5 reste à traiter : vérifier les références à `old_calc_fee` avant de supprimer cette fonction inutilisée.
 
+### Suivi des améliorations — priorité 5 : supprimer le calcul obsolète
+
+- La dernière extraction du chargement a été enregistrée dans le commit `70c3ab0`.
+- Recherche des références à `old_calc_fee` dans le dépôt, hors `.git` et `.venv` : seuls sa définition et les mentions du README étaient présents ; aucun appel trouvé.
+- Suppression de cette fonction et de son commentaire « ne plus utiliser ». Ses anciens tarifs pouvaient prêter à confusion avec le calcul métier utilisé, `late_fee`.
+- Vérification après suppression : **44 tests réussis en 5,12 s** ; aucune erreur Ruff avec la sélection TP3. Les tests de caractérisation et les fichiers golden n'ont pas été modifiés par cette correction.
+- État : les cinq priorités ont été traitées. Il reste à relever les mesures finales avec les commandes initiales, commenter la comparaison avant/après et finaliser le README et la pull request.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.
