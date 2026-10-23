@@ -43,8 +43,8 @@ class Library:
         self.load()
 
     # chargement des donnees
-    def load(self):
-        """Charger les trois CSV sans exécuter leur contenu."""
+    def load_books(self):
+        """Charger les livres et convertir leurs valeurs numériques."""
         with open(DATA + "/books.csv") as f:
             lines = f.readlines()
         for line in lines[1:]:
@@ -57,11 +57,15 @@ class Library:
                     "title": x[1],
                     "author": x[2],
                     "kind": x[3],
-                    # Un prix doit être numérique : ne jamais utiliser eval ici.
+                    # Convertir le prix sans exécuter le contenu du CSV.
                     "price": float(x[4]),
                     "copies": int(x[5]),
                 }
             )
+
+    def load(self):
+        """Charger les trois CSV sans exécuter leur contenu."""
+        self.load_books()
         with open(DATA + "/members.csv") as f:
             lines = f.readlines()
         for line in lines[1:]:

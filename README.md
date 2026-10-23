@@ -337,6 +337,15 @@ Le contrôle initial ne signale aucune règle de sécurité ou de fiabilité par
 - Ruff avec la sélection TP3 : **1 C901** restant dans `load`, contre 2 avant cette correction. Radon : **`find` A (3)**, contre **B (10)** au départ. `process` reste A (4) et `report` B (7).
 - État : priorité 3 vérifiée ; commit à effectuer après relecture du diff. Prochaine priorité : séparer les chargements de `load`. Le tableau final indiquera l'augmentation des tests de 37 à 44 à ce stade.
 
+### Suivi des améliorations — priorité 4 : séparer les chargements
+
+- La mutualisation de `find` et ses sept tests ont été enregistrés dans le commit `234030e`.
+- Première extraction : `load_books` prend en charge la lecture et la conversion des livres ; `load` appelle cette méthode avant de charger les membres et les emprunts.
+- Justification : isoler la responsabilité du chargement des livres sans changer les conversions, l'ordre de lecture ni l'ajout des données aux listes existantes.
+- Vérification après extraction : **44 tests réussis en 4,53 s**. Ruff avec la sélection TP3 ne signale plus aucune erreur.
+- Radon : **`load` B (7)**, contre **B (9)** avant extraction ; **`load_books` A (3)**. `report` reste B (7) et `process` A (4).
+- État : première extraction vérifiée ; les chargements des membres et des emprunts restent à séparer. Le bilan global sera établi après les autres améliorations prévues.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.
