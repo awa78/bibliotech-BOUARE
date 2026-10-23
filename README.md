@@ -282,6 +282,17 @@ Le contrôle initial ne signale aucune règle de sécurité ou de fiabilité par
 - Résultats transmis : **37 tests réussis en 4,38 s** ; Ruff avec la sélection du TP3 : **4 signalements C901**. L'extraction des traitements prépare la simplification du routage restant de `process`.
 - État : extraction vérifiée ; commit à effectuer après relecture du diff.
 
+#### Routage par dictionnaire et fin de la priorité 1
+
+- Le traitement de `export` a été extrait dans le commit `ffbb3a5`.
+- Problème : la suite de `if`/`elif` de `process` conservait un branchement pour chaque commande, même après extraction des traitements.
+- Modification : dictionnaire `commands` associant les noms aux traitements, recherche avec `get` et clause de garde pour une commande inconnue. Le résultat `None` des commandes d'affichage est traduit en code 0 ; les codes explicites des commandes d'emprunt, de retour et d'export sont conservés.
+- Justification : séparer le routage des détails de chaque commande et réduire le nombre de décisions dans la fonction principale, sans changer les sorties ni les codes de retour des scénarios vérifiés.
+- Tests transmis : **37 réussis en 5,00 s**.
+- Ruff avec la sélection TP3 : **3 C901**, contre 4 au départ ; `process` n'est plus signalée.
+- Mesure intermédiaire Radon : **`process` A (4)**, contre **C (16)** au départ. Les fonctions extraites sont en A : `display_catalog` (2), `display_members` (3), `handle_borrow` (3), `handle_return` (2) et `handle_export` (2).
+- État : priorité 1 vérifiée ; commit du routage à effectuer. Les mesures « après » globales restent réservées à l'étape finale. La prochaine priorité est `Library.report`, toujours C (14).
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.

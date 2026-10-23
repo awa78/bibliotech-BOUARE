@@ -483,24 +483,23 @@ def process(args):
         print("Commandes : list, members, borrow, return, overdue, report, export")
         return 1
     cmd = args[0]
-    if cmd == "list":
-        display_catalog(lib)
-    elif cmd == "members":
-        display_members(lib)
-    elif cmd == "borrow":
-        return handle_borrow(lib, args)
-    elif cmd == "return":
-        return handle_return(lib, args)
-    elif cmd == "overdue":
-        lib.overdue()
-    elif cmd == "report":
-        lib.report()
-    elif cmd == "export":
-        return handle_export(lib, args)
-    else:
+    commands = {
+        "list": lambda: display_catalog(lib),
+        "members": lambda: display_members(lib),
+        "borrow": lambda: handle_borrow(lib, args),
+        "return": lambda: handle_return(lib, args),
+        "overdue": lib.overdue,
+        "report": lib.report,
+        "export": lambda: handle_export(lib, args),
+    }
+
+    action = commands.get(cmd)
+    if action is None:
         print("Commande inconnue : " + cmd)
         return 1
-    return 0
+
+    result = action()
+    return 0 if result is None else result
 
 
 if __name__ == "__main__":
