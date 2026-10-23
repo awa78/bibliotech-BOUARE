@@ -8,7 +8,7 @@ Le point de départ est une application fonctionnelle volontairement difficile �
 
 ## Tableau récapitulatif des travaux réalisés
 
-Ce tableau regroupe les réalisations confirmées. Les résultats correspondent aux contrôles effectués à chaque étape ; la ligne TP3 sera complétée après réception des consignes et réalisation du travail.
+Ce tableau regroupe les réalisations confirmées. Les résultats correspondent aux contrôles effectués à chaque étape ;
 
 | TP | Axe de travail | Travaux réalisés | Résultat ou vérification | État |
 | --- | --- | --- | --- | --- |
@@ -96,6 +96,31 @@ Le calcul des pénalités et les dictionnaires de règles ayant déjà été int
 Cette liste décrit le travail prévu, pas le travail effectué. Les résultats et les éventuels bonus seront ajoutés à ce README au fur et à mesure du TP2.
 
 ## TP2 — Suivi du refactoring
+
+### Corrections et justification
+
+Le TP2 part du code réellement obtenu au TP1 : le calcul des pénalités était déjà centralisé dans `calculate_late_fee` et les dictionnaires de règles existaient. Le travail a donc consisté à tester ce comportement, adapter le calcul au contrat du guide et restructurer les emprunts, sans réintroduire les anciennes duplications.
+
+| Problème ou besoin de départ | Correction réalisée au TP2 | Justification et principe appliqué | Vérification |
+| --- | --- | --- | --- |
+| Les nouveaux tests doivent importer le module de l'application | Ajout de `pythonpath = ["."]` à la configuration pytest | Rendre `bibliotech` importable depuis les tests ; préparer l'environnement avant le refactoring | Tests importés correctement après configuration |
+| Absence de mesure de complexité initiale pour le TP2 | Ajout de Radon aux dépendances et relevé avant modification | Comparer des mesures avant/après avec le même outil | Départ : emprunt C (18), `process` C (16), `report` C (14) |
+| Les tests fournis ne décrivent pas directement chaque règle de pénalité | Ajout de 10 cas paramétrés dans `tests/test_rules.py`, avec `pytest.approx` | Tester les règles avant leur modification, avec des résultats attendus calculés indépendamment | Rouge d'import attendu avant la fonction, puis 10 cas réussis |
+| Les tests d'emprunt doivent être reproductibles et indépendants des données originales | Fixture `library` dans `tests/conftest.py` : copie temporaire des CSV et date fixe avec `monkeypatch` | Isoler l'état de chaque test et supprimer la dépendance à la date du jour | Les tests utilisent une copie des données au 21/10/2026 |
+| Les refus et le succès d'un emprunt doivent être protégés avant sa restructuration | Six tests dans `tests/test_borrow.py` : inactivité, retard, doublon, indisponibilité, limite et succès | Fixer le comportement observable avant le refactoring, notamment les messages et la création de l'emprunt | 6 tests d'emprunt et 21 tests de caractérisation réussis ensemble |
+| La fonction du TP1 reçoit des dictionnaires, alors que le guide demande un contrat explicite | Ajout de `late_fee(days_late, kind, member_type, price)` avec clause de garde, tarif, réduction, plafond et arrondi | Fonction pure à paramètres explicites, facile à tester ; application de KISS et séparation du calcul des entrées/sorties | Les cas sans retard, tarifs, réductions, plafond et type inconnu passent |
+| Quatre usages doivent migrer vers la nouvelle fonction sans modifier les traitements voisins | Remplacement successif des appels dans `ret`, `overdue`, `report` et `export` | Petits pas de refactoring ; conserver les jours affichés, les messages et les fichiers produits | Suite complète relancée après chaque remplacement validé |
+| Deux fonctions de pénalité subsistent pendant la migration | Suppression de `calculate_late_fee` après le dernier remplacement | DRY : conserver une seule implémentation des règles, sans code devenu inutilisé | Une définition de `late_fee`, quatre appels et 37 tests réussis |
+| Une boucle avec drapeau recherche les retards dans la méthode d'emprunt | Extraction de `has_overdue_loan(member_id)` avec `any` | Extract Function : nommer la question métier et alléger la méthode principale | Tests d'emprunt et de caractérisation verts après extraction |
+| Une seconde boucle avec drapeau recherche les documents déjà empruntés | Extraction de `is_borrowing(member_id, book_id)` avec `any` | Extract Function : rendre la vérification réutilisable et lisible | Refus pour document déjà emprunté conservé ; suite verte |
+| La décision de refus est mêlée à la création et à l'affichage de l'emprunt | Extraction de `refusal_reason(member, book)`, qui renvoie un motif ou `None` | Séparer la décision métier et conserver la priorité des refus | Ordre maintenu : inactivité, retard, limite, doublon, disponibilité ; tests verts |
+| Le calcul de l'échéance, de l'identifiant et la sauvegarde encombrent la méthode principale | Extraction de `create_loan(member, book)` | Regrouper la responsabilité de création de l'emprunt | Succès vérifié : L013, membre M005, document B005, échéance 2026-10-28 ; scénarios fournis verts |
+| L'imbrication des conditions rend le parcours d'emprunt difficile à suivre | Réécriture avec clauses de garde : erreur ou refus suivi d'un retour immédiat | Guard Clauses : réduire l'imbrication et laisser le cas accepté à la fin | Même résultat dans les cas testés ; méthode finale `borrow` A (4) au lieu de C (18) |
+| Le nom de la méthode et ses références doivent suivre la structure demandée par le guide | Renommage de `borrow_document` en `borrow`, mise à jour de `process` et des huit appels des tests d'emprunt | Garder des définitions et appels cohérents ; nom conforme au rôle final | 37 tests réussis après renommage |
+| Les règles nommées demandées en section 3.2 existent déjà depuis le TP1 | Vérification et réutilisation de `LOAN_DAYS`, `DAILY_FEE` et `MAX_LOANS` | Conserver les règles centralisées ; éviter une modification artificielle ou une duplication | Valeurs et défauts conservés ; suite complète verte |
+| Le résultat du refactoring doit être justifié et traçable | Mesures Radon après modification, README, commits progressifs et publication de la pull request nº 2 | Appuyer le bilan sur des résultats vérifiables et permettre la revue du professeur | 37 tests réussis ; `borrow` A (4), aucune fonction en D ou supérieure ; `process` C (16) et `report` C (14) restent identifiés |
+
+**Portée des résultats :** les tests confirment les scénarios écrits, pas l'absence de tous les bugs. Les valeurs Radon sont distinctes des signalements Ruff. Les niveaux obligatoires du TP2 sont réalisés ; aucun bonus n'est revendiqué. La validation de l'enseignant reste à confirmer avant fusion.
 
 ### Avancement actuel
 
