@@ -246,6 +246,15 @@ Le contrôle initial ne signale aucune règle de sécurité ou de fiabilité par
 - Résultats transmis après modification : **37 tests réussis en 4,21 s** ; Ruff avec la sélection du TP3 : **4 signalements C901**. Le seuil Ruff reste dépassé ; la priorité 1 se poursuit par petits pas. Le tableau « après » ne sera rempli qu'une fois les améliorations terminées.
 - État : étape vérifiée ; commit à effectuer après relecture du diff.
 
+#### Deuxième extraction : affichage des membres
+
+- L'extraction du catalogue a été enregistrée dans le commit `19f12cf`.
+- Problème : `process` contenait aussi la boucle d'affichage des membres, le choix du texte actif/inactif et le comptage des emprunts en cours.
+- Modification : extraction de `display_members(library)` ; le traitement de la commande `members` appelle désormais `display_members(lib)`. Les variables `member` et `status` décrivent leur rôle.
+- Justification : séparer l'affichage des membres du routage des commandes et conserver le texte affiché.
+- Résultats transmis : **37 tests réussis en 5,32 s** ; Ruff avec la sélection du TP3 : **4 signalements C901**. Cette étape prépare la simplification complète de `process` ; elle ne suffit pas encore à supprimer son signalement.
+- État : deuxième extraction vérifiée ; commit à effectuer après relecture du diff.
+
 ## Installation
 
 Python 3.10 ou plus récent est nécessaire.

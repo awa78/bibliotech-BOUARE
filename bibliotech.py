@@ -436,6 +436,15 @@ def display_catalog(library):
             f"{book['kind']} | {available}/{book['copies']} disponible(s)"
         )
 
+def display_members(library):
+    for member in library.m:
+        status = "actif" if member["active"] else "inactif"
+        print(
+            f"{member['id']} | {member['name']} | {member['type']} | "
+            f"{status} | {library.count_active_loans(member['id'])} "
+            "emprunt(s) en cours"
+        )
+
 
 
 def process(args):
@@ -451,12 +460,7 @@ def process(args):
     if cmd == "list":
         display_catalog(lib)
     elif cmd == "members":
-        for x in lib.m:
-            s = "actif" if x["active"] else "inactif"
-            print(
-                f"{x['id']} | {x['name']} | {x['type']} | {s} | "
-                f"{lib.count_active_loans(x['id'])} emprunt(s) en cours"
-            )
+        display_members(lib)
     elif cmd == "borrow":
         if len(args) < 3:
             print("Usage : borrow <id_membre> <id_document>")
