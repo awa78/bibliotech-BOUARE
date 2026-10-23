@@ -6,6 +6,10 @@ Application Python en ligne de commande de gestion d'une bibliothèque municipal
 
 Ce README regroupe les résultats, les justifications et les journaux des trois TP. L'objectif est d'améliorer un programme existant par petits pas en conservant les comportements couverts par les tests.
 
+**Résultats finaux relevés : 44 tests réussis, aucun signalement avec la sélection Ruff du TP3, complexité moyenne Radon A (3,34) et aucun bloc classé C ou plus.** Le détail des mesures, de leur périmètre et de leurs limites figure dans les parties 4 et 5.
+
+Navigation : [TP1](#2-tp-1--clean-code) · [TP2](#3-tp-2--refactoring) · [TP3](#4-tp-3--qualité) · [Comparaison des trois TP](#tableau-global-des-résultats-des-trois-tp) · [Installation et commandes](#6-exécution-du-projet).
+
 | Fichiers | Rôle |
 | --- | --- |
 | `bibliotech.py` | Règles métier, chargement CSV et commandes |
@@ -19,7 +23,7 @@ Ce README regroupe les résultats, les justifications et les journaux des trois 
 | --- | --- | --- |
 | 1 | Nettoyage et corrections de revue ; 21 tests verts | [PR 1 fusionnée](https://github.com/awa78/bibliotech-BOUARE/pull/1), `v0-initial` |
 | 2 | Refactoring des pénalités et emprunts ; 37 tests verts | [PR 2 fusionnée](https://github.com/awa78/bibliotech-BOUARE/pull/2), `v2-fin-j2` |
-| 3 | Cinq priorités traitées ; 44 tests verts ; zéro erreur Ruff TP3 | Branche `qualite` ; PR finale à ouvrir après publication |
+| 3 | Cinq priorités traitées ; 44 tests verts ; zéro erreur Ruff TP3 | Branche `qualite` ; [PR 4 : complément documentaire](https://github.com/awa78/bibliotech-BOUARE/pull/4) |
 
 ## 2. TP 1 – Clean Code
 
@@ -42,6 +46,28 @@ Ce README regroupe les résultats, les justifications et les journaux des trois 
 
 La fonction `calculate_late_fee` gère l'absence de retard, le tarif journalier, les réductions étudiant/premium, le plafond au prix du document et l'arrondi au centime. L'arrondi redondant dans le cumul du rapport a été supprimé après revue.
 
+### Trois exemples précis de correction
+
+**Lire un prix sans exécuter le CSV.** Dans le code de départ, `eval(x[4])` interprétait le champ comme une expression Python. Le remplacement par une conversion numérique refuse une expression non numérique. Cette correction de sécurité peut donc modifier le traitement d'un fichier malveillant ; elle conserve les résultats des données valides couvertes par les tests.
+
+```python
+"price": float(x[4]),
+```
+
+**Fermer un fichier même si sa lecture échoue.** Le gestionnaire de contexte remplace la fermeture manuelle. La lecture et le traitement des lignes restent distincts.
+
+```python
+with open(DATA + "/books.csv") as f:
+    lines = f.readlines()
+```
+
+**Rendre visibles les échecs de plugins.** Une erreur ordinaire est journalisée avec sa trace, puis les plugins suivants peuvent s'exécuter. La capture de `Exception` laisse notamment `KeyboardInterrupt` et `SystemExit` se propager ; elle est donc volontairement plus restreinte que l'ancien `except:`.
+
+```python
+except Exception:
+    LOGGER.exception("Echec du plugin %s pour l'evenement %s", name, event)
+```
+
 ### Résultats et vérifications du TP1
 
 | Indicateur | Version initiale | Fin du TP1, après revue |
@@ -52,7 +78,7 @@ La fonction `calculate_late_fee` gère l'absence de retard, le tarif journalier,
 
 Les fichiers `tests/test_caracterisation.py`, `tests/golden/` et les données de référence sont restés inchangés. Les tests vérifient les scénarios fournis : leur réussite ne prouve pas l'absence de bugs dans tous les cas possibles.
 
-Des vérifications ciblées supplémentaires ont été exécutées pendant la revue : rejet d'une expression Python dans un prix sans exécution, présence du nom et de la trace d'un plugin défaillant dans les journaux, poursuite du plugin suivant, propagation de `SystemExit`, tarifs, réductions, plafond et cas sans retard. Le script de vérification était extérieur au dépôt ; ces contrôles ne constituent pas encore une suite de tests unitaires versionnée. Les tests unitaires ont ensuite été ajoutés au TP2.
+Des vérifications ciblées supplémentaires ont été exécutées pendant la revue : rejet d'une expression Python dans un prix sans exécution, présence du nom et de la trace d'un plugin défaillant dans les journaux, poursuite du plugin suivant, propagation de `SystemExit`, tarifs, réductions, plafond et cas sans retard. Le script de vérification était extérieur au dépôt : ces essais historiques ne sont pas reproductibles à partir des seuls tests versionnés. Le TP2 a ensuite ajouté une suite versionnée sur les pénalités et les emprunts ; elle ne remplace pas les essais de sécurité et de plugins.
 
 ### Difficultés rencontrées et solutions
 
@@ -509,6 +535,30 @@ Le TP2 a été fusionné par l'enseignant. Les niveaux obligatoires 1 et 2 sont 
 
 La complexité de l'emprunt passe de C (18) à A (4). Les tests passent de 21 à 37 : 21 de caractérisation, 10 de pénalités, six d'emprunt. `process` C (16) et `report` C (14) restent pour l'audit du TP3. Les dictionnaires de règles existaient déjà depuis les corrections de revue du TP1.
 
+### Choix de structure et preuve par les tests
+
+`borrow` recherche les objets, vérifie un éventuel refus, puis délègue la création. Les clauses de garde évitent d'imbriquer la suite du traitement dans plusieurs conditions. Extrait de la méthode actuelle :
+
+```python
+reason = self.refusal_reason(member, book)
+if reason is not None:
+    print(f"Refus : {reason}")
+    return False
+
+self.create_loan(member, book)
+return True
+```
+
+L'ordre des contrôles est conservé : membre et document connus, membre actif, absence de retard, limite non atteinte, document non déjà emprunté, exemplaire disponible. C'est important lorsque plusieurs motifs de refus sont possibles : le premier message doit rester le même.
+
+| Suite ajoutée | Cas vérifiés | Pourquoi ces tests |
+| --- | --- | --- |
+| [Pénalités](tests/test_rules.py) : 10 cas | Retard nul ou négatif ; livre, DVD, magazine ; étudiant, premium ; plafond ; type inconnu ; montant au centime | Vérifier directement les règles de la fonction pure avec `pytest.approx` |
+| [Emprunts](tests/test_borrow.py) : 6 cas | Membre inactif, retard, doublon, indisponibilité, limite, succès | Protéger les décisions métier pendant la décomposition de l'emprunt |
+| [Fixture](tests/conftest.py) | Copie des CSV dans un répertoire temporaire et date fixe | Éviter les interactions entre tests et la dépendance à la date réelle |
+
+La migration progressive du calcul et les tests sont visibles dans les commits [bd98aa7](https://github.com/awa78/bibliotech-BOUARE/commit/bd98aa7), [e960d2d](https://github.com/awa78/bibliotech-BOUARE/commit/e960d2d) et [e3cb80b](https://github.com/awa78/bibliotech-BOUARE/commit/e3cb80b).
+
 
 <details>
 <summary>Journal des essais du TP2</summary>
@@ -674,6 +724,17 @@ La complexité maximale passe de 16 à 7. La baisse ne repose donc pas seulement
 La suppression effective de `old_calc_fee` a été enregistrée dans `e5f5434`, après le commit documentaire `69ad263`. Les contrôles après cette suppression donnent **44 tests réussis en 5,02 s** et aucune erreur Ruff. La recherche Radon des blocs C ou plus ne renvoie aucun résultat.
 
 Dette restante : `Library` regroupe encore plusieurs responsabilités et ses collections `b`, `m`, `l` gardent des noms peu explicites. `report` reste la méthode la plus complexe (7). Ces points pourront être améliorés ultérieurement ; ils ne sont pas masqués par des exclusions supplémentaires ou des commentaires `noqa`.
+
+### Limites et prochaines priorités possibles
+
+| Limite actuelle | Conséquence | Amélioration possible, non réalisée |
+| --- | --- | --- |
+| Entrées CSV peu validées | Une ligne mal formée peut interrompre le chargement | Tester les champs manquants et valeurs invalides, puis définir des messages d'erreur explicites |
+| Persistance, règles et affichages encore réunis dans `Library` | La classe reste difficile à faire évoluer indépendamment des fichiers | Séparer ces responsabilités en conservant les tests de caractérisation |
+| Noms `b`, `m`, `l` et plusieurs noms locaux courts | Lecture moins immédiate | Renommage cohérent des définitions et des appels, contrôlé par les tests |
+| Essais de sécurité et de plugins non versionnés | Leur réussite historique ne constitue pas une protection automatique future | Ajouter des tests ciblés dans une évolution ultérieure |
+
+Ces limites expliquent pourquoi « zéro signalement Ruff » ne signifie pas « aucun défaut ». Aucune mesure de couverture n'a été réalisée pour ce bilan, et aucun gain de performance n'est revendiqué.
 
 
 <details>
@@ -883,18 +944,22 @@ Pistes futures : mieux séparer les responsabilités de `Library`, renommer ses 
 ### Installation
 
 
-Python 3.10 ou plus récent est nécessaire.
-
-```bash
-python -m venv .venv
-source .venv/bin/activate        # Linux / macOS
-pip install -r requirements.txt
-```
-
-Sous Windows PowerShell, l'activation s'effectue avec :
+Python 3.10 ou plus récent est nécessaire. Depuis un terminal PowerShell, pour récupérer le dépôt et consulter la branche de remise :
 
 ```powershell
+git clone https://github.com/awa78/bibliotech-BOUARE.git
+cd bibliotech-BOUARE
+git switch qualite
+python -m venv .venv
 .\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+```
+
+Si le dépôt est déjà présent, ouvrir son dossier et activer l'environnement existant. Après fusion de la remise, les résultats sont également consultables sur `main`. Sous Linux/macOS, remplacer l'activation PowerShell par :
+
+```bash
+source .venv/bin/activate        # Linux / macOS
+python -m pip install -r requirements.txt
 ```
 
 ### Utilisation
@@ -916,7 +981,7 @@ L'option `--today AAAA-MM-JJ` permet de simuler une autre date, par exemple :
 python bibliotech.py overdue --today 2026-10-21
 ```
 
-Les données se trouvent dans le dossier `data/`. Les commandes `borrow` et `return` modifient `data/loans.csv` : pour revenir aux données d'origine, lancez `git restore data/`.
+Les données se trouvent dans le dossier `data/`. Les commandes `borrow` et `return` modifient `data/loans.csv` ; `export` écrit le fichier demandé. Pour essayer ces commandes sans modifier les données de travail, utiliser une copie du dossier `data` et définir `BIBLIOTECH_DATA` vers cette copie. La commande `overdue` peut également produire des rappels.
 
 ### Règles métier
 
@@ -962,5 +1027,7 @@ git diff v2-fin-j2 -- tests/test_caracterisation.py tests/golden/
 ```
 
 La dernière commande ne produit aucune différence. Ruff et Radon filtrée ne produisent aucun signalement. La sélection Ruff TP3 est explicite : `ruff check .` seul utilise la configuration héritée, qui est différente.
+
+Lors de la relecture documentaire, les vérifications ont été relancées dans un nouveau processus PowerShell avec l'environnement `.venv` existant : **44 tests réussis en 5,47 s**, aucun signalement Ruff TP3 et moyenne Radon **A (3,34375)** sur 32 blocs. `python bibliotech.py list` affiche le catalogue et `python -m pip check` ne signale aucune dépendance incohérente. La création d'un environnement entièrement neuf et la réinstallation des dépendances n'ont pas été rejouées lors de cette relecture. Le temps de 5,02 s dans les tableaux reste celui du relevé final initial.
 
 La remise est une pull request de `qualite` vers `main`, avec les cinq améliorations et le tableau avant/après dans la description. La fusion est laissée à l'enseignant.
