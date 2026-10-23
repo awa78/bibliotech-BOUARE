@@ -851,6 +851,25 @@ Le contrôle initial ne signale aucune règle de sécurité ou de fiabilité par
 
 ## 5. Bilan des trois jours
 
+### Tableau global des résultats des trois TP
+
+Les colonnes présentent l'état atteint à la fin de chaque TP. Les mesures absentes du relevé historique ne sont pas reconstituées comme si elles avaient été exécutées à l'époque.
+
+| Indicateur | Fin du TP1 — Clean Code | Fin du TP2 — Refactoring | Fin du TP3 — Qualité |
+| --- | --- | --- | --- |
+| Tests réussis | 21 | 37 | 44 |
+| Répartition des tests | 21 de caractérisation | 21 de caractérisation + 10 pénalités + 6 emprunts | Les 37 précédents + 7 cas de recherche |
+| Signalements Ruff relevés | 5 C901 | 4 C901, relevés au début du TP3 sur `v2-fin-j2` | 0 avec la sélection TP3 |
+| Complexité Radon de l'emprunt | C (18), relevée au départ du TP2 | A (4) | A (4) |
+| Complexité Radon de `process` | C (16), relevée au départ du TP2 | C (16) | A (4) |
+| Complexité Radon de `report` | C (14), relevée au départ du TP2 | C (14) | B (7) |
+| Complexité moyenne Radon | Non relevée à cette étape | B (5,18), 22 blocs, relevée sur `v2-fin-j2` | A (3,34), 32 blocs |
+| Blocs Radon classés C ou plus | 3, relevés au départ du TP2 | 2 | 0 |
+| Résultat principal | Imports, conditions, noms, fichiers, sécurité et calcul commun nettoyés | Règles testées, `late_fee` unique et emprunt décomposé avec clauses de garde | Routage, rapport, recherche et chargements simplifiés ; calcul obsolète supprimé |
+| Préservation des références fournies | Tests de caractérisation et fichiers golden conservés | Références conservées ; tests unitaires ajoutés | Références conservées ; sept cas supplémentaires |
+
+**Lecture des chiffres :** le relevé Ruff du TP1 utilise la sélection configurée à cette étape ; les deux dernières colonnes utilisent la sélection imposée au TP3. La baisse 4 → 0 est donc la comparaison Ruff directement comparable. Les chiffres Radon du départ du TP2 décrivent le code issu du TP1 fusionné ; ils sont distincts des valeurs calculées par Ruff. La moyenne Radon baisse en partie grâce aux extractions, mais les scores individuels de `process`, `report` et de l'emprunt confirment aussi la simplification. Le nombre de tests augmente sans modifier les sorties de référence pour faire passer les corrections.
+
 Le TP1 a amélioré la lisibilité et corrigé les points dangereux. Le TP2 a permis de tester les règles et de séparer les décisions des actions. Le TP3 a utilisé les mesures pour choisir les priorités et comparer les résultats.
 
 Acquis : extraction de fonctions, clauses de garde, tests paramétrés, lecture des métriques et petits commits vérifiés. Les difficultés ont concerné l'indentation, les renommages incomplets, les commandes collées avec le préfixe PowerShell et les fichiers non enregistrés dans VS Code. La solution a été de vérifier le fichier sur disque, lire le diff et relancer les tests avant de poursuivre.
