@@ -2,19 +2,41 @@
 
 Application en ligne de commande de gestion d'une bibliothèque municipale : catalogue, membres, emprunts, retours, pénalités de retard, rappels et rapports.
 
-Projet fil rouge du module *Clean Code et Qualité logicielle*, réalisé individuellement par **Awa BOUARE**. Le travail comprend le **TP1 (nettoyage)**, le **TP2 (refactoring et tests unitaires)**, puis une soutenance.
+Projet fil rouge du module *Clean Code et Qualité logicielle*, réalisé individuellement par **Awa BOUARE**. Le travail comprend le **TP1 (nettoyage)**, le **TP2 (refactoring et tests unitaires)** et un **TP3 à venir**, dont les consignes restent à intégrer.
 
 Le point de départ est une application fonctionnelle volontairement difficile à maintenir. L'objectif est d'améliorer sa lisibilité et sa structure en préservant les comportements vérifiés par les tests de caractérisation. Ce README présente le bilan du travail ; [SYNTHESE_TP1.md](SYNTHESE_TP1.md) conserve le journal détaillé des corrections, essais et difficultés.
 
-## État du projet avant le TP2
+## Tableau récapitulatif des travaux réalisés
+
+Ce tableau regroupe les réalisations confirmées. Les résultats correspondent aux contrôles effectués à chaque étape ; la ligne TP3 sera complétée après réception des consignes et réalisation du travail.
+
+| TP | Axe de travail | Travaux réalisés | Résultat ou vérification | État |
+| --- | --- | --- | --- | --- |
+| TP1 | Préparation et Git | Installation dans `.venv`, dépôt personnel, branche `tp1/nettoyage`, étiquette `v0-initial` publiée | Point de départ : 21 tests réussis et 55 signalements Ruff | Réalisé |
+| TP1 | Lisibilité | Imports explicites et triés, suppression d'un import inutilisé, conditions et affectations simplifiées, renommage de méthodes, formatage Ruff | Tests de caractérisation conservés et vérifiés au fil des changements | Réalisé |
+| TP1 | Fichiers et état partagé | Cinq ouvertures de fichiers avec `with`, suppression du dictionnaire mutable par défaut dans `register_plugin` | Scénarios fournis réussis après les modifications | Réalisé |
+| TP1 | Règles et duplication | Durées nommées puis dictionnaires `LOAN_DAYS`, `DAILY_FEE`, `MAX_LOANS` ; extraction de `calculate_late_fee` et remplacement des quatre copies | Calcul commun utilisé dans les retours, les retards, le rapport et l'export | Réalisé ; fonction adaptée en `late_fee` au TP2 |
+| TP1 | Corrections de revue | `float` remplace `eval`, exceptions précisées, erreurs de plugins journalisées, `pass` inutile supprimé, f-strings et `join`, arrondi redondant supprimé, commentaires | Fin du TP1 : 21 tests réussis et 5 signalements Ruff ; contrôles ciblés de sécurité et de plugins effectués hors dépôt | Réalisé |
+| TP1 | Documentation et remise | Journal dans `SYNTHESE_TP1.md`, bilan dans le README, commits progressifs et pull request nº 1 | TP1 fusionné par l'enseignant | Terminé |
+| TP2 | Préparation et mesure initiale | Branche `tp2/refactoring`, configuration `pythonpath` pour pytest, ajout de Radon | 21 tests réussis ; Radon initial : emprunt C (18), `process` C (16), `report` C (14) | Réalisé |
+| TP2 | Tests avant refactoring | `tests/test_rules.py` : 10 cas paramétrés ; `tests/test_borrow.py` : 6 tests ; fixture temporaire et date fixe dans `tests/conftest.py` | Rouge d'import attendu sur `late_fee`, puis vérification des règles et des emprunts | Réalisé |
+| TP2 | Niveau 1 : fonction pure | Ajout de `late_fee`, remplacement des appels dans `ret`, `overdue`, `report`, `export`, puis suppression de `calculate_late_fee` | Une implémentation commune ; 37 tests réussis | Réalisé |
+| TP2 | Niveau 2 : clauses de garde | Extraction de `has_overdue_loan`, `is_borrowing`, `refusal_reason`, `create_loan` ; méthode principale renommée en `borrow`, appels et tests mis à jour | `borrow` A (4), aucune fonction en note D ou supérieure ; 37 tests réussis | Réalisé |
+| TP2 | Documentation et remise | README avec mesures avant/après, commits nommés, branche publiée et pull request nº 2 ouverte | Relecture du professeur et validation à confirmer avant fusion | Réalisations publiées ; revue à confirmer |
+| TP3 | À préciser selon le guide | Aucun travail TP3 réalisé à ce stade | Mesures, tests, livrables et lien de remise à renseigner après réalisation | À venir |
+
+**Repères de lecture :** les 5 signalements Ruff correspondent à la fin du TP1. Le contrôle effectué lors de la préparation de la présentation du TP2 en comptait 8 : 4 de complexité et 4 de style. Ces mesures sont distinctes des notes Radon et des résultats des tests. Aucun bonus du TP2 n'a été réalisé.
+
+## État du projet et remises
 
 | Étape | État |
 | --- | --- |
 | TP1 : nettoyage et corrections de revue | Réalisés sur `tp1/nettoyage` |
 | Remise du TP1 | [Pull request nº 1](https://github.com/awa78/bibliotech-BOUARE/pull/1) |
 | Version initiale de comparaison | Étiquette Git `v0-initial` |
-| TP2 : refactoring et tests unitaires | Niveaux 1 et 2 vérifiés ; commit final, publication et revue à terminer |
-| Soutenance | À préparer après le TP2 |
+| TP2 : refactoring et tests unitaires | Niveaux 1 et 2 vérifiés et publiés dans la [pull request nº 2](https://github.com/awa78/bibliotech-BOUARE/pull/2) ; revue et validation à confirmer |
+| TP3 | À venir ; consignes non encore intégrées |
+| Présentation du travail | Supports TP1 et TP2 préparés ; à compléter après le TP3 |
 
 Le TP1 a été fusionné par l'enseignant et récupéré sur `main` avant la création de la branche du TP2. Le suivi ci-dessous distingue les étapes effectuées et celles restant à réaliser.
 
